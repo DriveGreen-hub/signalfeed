@@ -16,9 +16,9 @@
     --font-head:'Syne',sans-serif; --font-serif:'DM Serif Display',serif;
     --font-body:'DM Sans',sans-serif; --radius:6px; --radius-lg:10px;
   }
-  html { font-size:14px; }
-  body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; overflow-x:hidden; }
-  ::-webkit-scrollbar{width:4px;height:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+  html{font-size:14px}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+  ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
   #app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
   #topbar{border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200;padding:0 24px;display:flex;align-items:stretch;justify-content:space-between;height:56px}
   #topbar-left{display:flex;align-items:center;gap:20px}
@@ -26,7 +26,7 @@
   #logo span{color:var(--accent)}
   #topbar-right{display:flex;align-items:center;gap:12px}
   #last-update{font-size:11px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.04em}
-  #main{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
+  #main{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 56px)}
   #sidebar{border-right:1px solid var(--border);padding:20px 16px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column;gap:24px;background:var(--bg)}
   .sst{font-size:9px;font-family:var(--font-head);letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-bottom:9px}
   #stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -47,8 +47,16 @@
   .keyword-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-size:11px;color:var(--text2)}
   .keyword-item button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
   .keyword-item button:hover{color:var(--red)}
-  #keyword-input-row{display:flex;gap:5px;margin-top:5px}
-  #keyword-input-row input{flex:1;min-width:0}
+  .add-row{display:flex;gap:5px;margin-top:5px}
+  .add-row input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:6px 10px;font-size:11px;font-family:var(--font-body);outline:none}
+  .add-row input:focus{border-color:var(--border2)}
+  .add-row input::placeholder{color:var(--text3)}
+  #account-list{display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto}
+  .account-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-size:11px}
+  .account-handle{color:var(--accent2);font-family:var(--font-head);font-size:10px}
+  .account-name{color:var(--text2);font-size:11px}
+  .account-item button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+  .account-item button:hover{color:var(--red)}
   #source-list{display:flex;flex-direction:column;gap:5px}
   .source-row{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:var(--radius);background:var(--bg2);border:1px solid var(--border);font-size:11px}
   .source-dot{width:7px;height:7px;border-radius:50%;margin-right:7px;flex-shrink:0}
@@ -62,7 +70,7 @@
   #importance-wrap{display:flex;align-items:center;gap:8px}
   #importance-wrap input[type=range]{flex:1;accent-color:var(--accent)}
   #importance-val{font-size:11px;color:var(--accent);font-family:var(--font-head);min-width:18px}
-  #content{padding:20px 24px;max-width:900px}
+  #content{padding:20px 24px;max-width:920px}
   #briefing-card{background:linear-gradient(135deg,#141a0e 0%,#0f1a0a 100%);border:1px solid #2a3820;border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:20px;display:none}
   #briefing-card.visible{display:block}
   #briefing-date{font-size:10px;font-family:var(--font-head);color:var(--accent2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
@@ -77,7 +85,7 @@
   #progress-bar-bg{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
   #progress-bar-fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.6s ease;width:0%}
   #progress-label{font-size:10px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.06em;margin-top:6px}
-  .news-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:7px;cursor:pointer;transition:border-color 0.15s,background 0.15s;animation:fadeUp 0.35s ease both}
+  .news-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:7px;transition:border-color 0.15s,background 0.15s;animation:fadeUp 0.35s ease both}
   .news-card:hover{border-color:var(--border2);background:var(--bg3)}
   .news-card.breaking{border-left:3px solid var(--red)}
   @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -90,6 +98,8 @@
   .breaking-dot{width:5px;height:5px;background:var(--red);border-radius:50%;animation:blink 1.2s ease infinite}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
   .card-headline{font-size:13px;font-family:var(--font-serif);color:var(--text);line-height:1.5;margin-bottom:8px;font-weight:400}
+  .card-headline a{color:inherit;text-decoration:none;border-bottom:1px solid var(--border2);transition:border-color 0.15s,color 0.15s}
+  .card-headline a:hover{color:var(--accent);border-color:var(--accent2)}
   .card-bottom{display:flex;align-items:center;justify-content:space-between}
   .importance-dots{display:flex;gap:3px;align-items:center}
   .imp-dot{width:5px;height:5px;border-radius:50%}
@@ -97,8 +107,12 @@
   .card-expand{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none}
   .card-expand.open{display:block}
   .card-summary{font-size:12px;color:var(--text2);line-height:1.75;margin-bottom:10px}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
   .card-tags{display:flex;flex-wrap:wrap;gap:4px}
   .card-tag{font-size:10px;color:var(--text3);font-family:var(--font-head);padding:2px 6px;border:1px solid var(--border);border-radius:3px}
+  .card-source-link{font-size:10px;color:var(--text3);font-family:var(--font-head);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color 0.15s;flex-shrink:0}
+  .card-source-link:hover{color:var(--accent)}
+  .card-toggle{cursor:pointer;padding:4px 0}
   button,.btn{background:none;border:1px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:0.06em;padding:7px 14px;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
   button:hover{border-color:var(--text3);color:var(--text)}
   button:disabled{opacity:0.4;cursor:default}
@@ -109,8 +123,8 @@
   .empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
   .empty-icon{font-size:36px;margin-bottom:12px}
   .empty-label{font-size:12px;font-family:var(--font-head);letter-spacing:0.08em}
-  #error-msg{display:none;background:#1a0000;border:1px solid #440000;border-radius:var(--radius);padding:14px 16px;font-size:12px;color:#ff8888;margin-bottom:14px;font-family:var(--font-head);line-height:1.6}
-  #source-status{font-size:10px;color:var(--text3);font-family:var(--font-head);margin-top:8px;line-height:1.7}
+  #error-msg{display:none;background:#1a0000;border:1px solid #440000;border-radius:var(--radius);padding:14px 16px;font-size:12px;color:#ff8888;margin-bottom:14px;font-family:var(--font-head);line-height:1.7}
+  #source-status{font-size:10px;color:var(--text3);font-family:var(--font-head);margin-top:8px;line-height:1.8}
   @media(max-width:768px){#main{grid-template-columns:1fr}#sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}#content{padding:14px 16px}#topbar{padding:0 16px}}
 </style>
 </head>
@@ -130,6 +144,8 @@
   </header>
   <div id="main">
     <aside id="sidebar">
+
+      <!-- Stats -->
       <div>
         <div class="sst">Today's signals</div>
         <div id="stats-grid">
@@ -139,34 +155,56 @@
           <div class="stat-card"><div class="stat-num" id="st-bullish" style="color:var(--green)">—</div><div class="stat-label">bullish</div></div>
         </div>
       </div>
+
+      <!-- Channels -->
       <div>
         <div class="sst">Channels</div>
-        <nav id="nav-channels">
-          <div class="nav-item active" data-cat="all" onclick="sfSetCat(this,'all')"><span><span class="nav-icon">◈</span>All signals</span><span class="nav-count" id="nc-all">0</span></div>
-          <div class="nav-item" data-cat="china" onclick="sfSetCat(this,'china')"><span><span class="nav-icon">⬡</span>China launches</span><span class="nav-count" id="nc-china">0</span></div>
-          <div class="nav-item" data-cat="ev" onclick="sfSetCat(this,'ev')"><span><span class="nav-icon">⚡</span>EV & Tesla</span><span class="nav-count" id="nc-ev">0</span></div>
-          <div class="nav-item" data-cat="tech" onclick="sfSetCat(this,'tech')"><span><span class="nav-icon">◎</span>Tech & AI</span><span class="nav-count" id="nc-tech">0</span></div>
-          <div class="nav-item" data-cat="press" onclick="sfSetCat(this,'press')"><span><span class="nav-icon">◆</span>Press releases</span><span class="nav-count" id="nc-press">0</span></div>
-          <div class="nav-item" data-cat="social" onclick="sfSetCat(this,'social')"><span><span class="nav-icon">⊕</span>Social & Reddit</span><span class="nav-count" id="nc-social">0</span></div>
+        <nav>
+          <div class="nav-item active" data-cat="all"    onclick="sfSetCat(this,'all')">   <span><span class="nav-icon">◈</span>All signals</span>   <span class="nav-count" id="nc-all">0</span></div>
+          <div class="nav-item" data-cat="china"  onclick="sfSetCat(this,'china')"> <span><span class="nav-icon">⬡</span>China launches</span> <span class="nav-count" id="nc-china">0</span></div>
+          <div class="nav-item" data-cat="ev"     onclick="sfSetCat(this,'ev')">    <span><span class="nav-icon">⚡</span>EV & Tesla</span>      <span class="nav-count" id="nc-ev">0</span></div>
+          <div class="nav-item" data-cat="tech"   onclick="sfSetCat(this,'tech')">  <span><span class="nav-icon">◎</span>Tech & AI</span>        <span class="nav-count" id="nc-tech">0</span></div>
+          <div class="nav-item" data-cat="press"  onclick="sfSetCat(this,'press')"> <span><span class="nav-icon">◆</span>Press releases</span>  <span class="nav-count" id="nc-press">0</span></div>
+          <div class="nav-item" data-cat="social" onclick="sfSetCat(this,'social')"><span><span class="nav-icon">⊕</span>X / Social</span>       <span class="nav-count" id="nc-social">0</span></div>
+          <div class="nav-item" data-cat="charging" onclick="sfSetCat(this,'charging')"><span><span class="nav-icon">⏚</span>Charging Infra</span>  <span class="nav-count" id="nc-charging">0</span></div>
         </nav>
       </div>
+
+      <!-- Brand watchlist -->
       <div>
         <div class="sst">Brand watchlist</div>
         <div id="brand-tags"></div>
       </div>
+
+      <!-- Keyword alerts -->
       <div>
         <div class="sst">Keyword alerts</div>
         <div id="keyword-list"></div>
-        <div id="keyword-input-row">
-          <input id="kw-input" type="text" placeholder="e.g. solid state…" onkeydown="if(event.key==='Enter')sfAddKeyword()" style="flex:1;min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:6px 10px;font-size:11px;font-family:var(--font-body);outline:none"/>
+        <div class="add-row">
+          <input id="kw-input" type="text" placeholder="e.g. solid state…" onkeydown="if(event.key==='Enter')sfAddKeyword()" />
           <button onclick="sfAddKeyword()" class="btn-accent" style="flex-shrink:0;font-size:11px;padding:5px 10px">+ Add</button>
         </div>
       </div>
+
+      <!-- X Accounts -->
+      <div>
+        <div class="sst">X accounts to watch</div>
+        <div id="account-list"></div>
+        <div class="add-row" style="margin-top:5px">
+          <input id="acc-input" type="text" placeholder="@handle or handle" onkeydown="if(event.key==='Enter')sfAddAccount()" />
+          <button onclick="sfAddAccount()" class="btn-accent" style="flex-shrink:0;font-size:11px;padding:5px 10px">+ Add</button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.6">Posts fetched via Nitter RSS (free, no API key)</div>
+      </div>
+
+      <!-- Sources -->
       <div>
         <div class="sst">Active sources</div>
         <div id="source-list"></div>
         <div id="source-status"></div>
       </div>
+
+      <!-- Importance -->
       <div>
         <div class="sst">Min. importance</div>
         <div id="importance-wrap">
@@ -176,7 +214,9 @@
           <span id="importance-val">1+</span>
         </div>
       </div>
+
     </aside>
+
     <main id="content">
       <div id="briefing-card">
         <div id="briefing-date"></div>
@@ -196,317 +236,415 @@
     </main>
   </div>
 </div>
-<script>
-// ── State ──────────────────────────────────────────────────────────────────────
-var SF = {
-  news: [], cat: 'all', brandFilter: '', minImportance: 1, keywords: [],
-  sources: {
-    google_en: { label:'Google News EN', color:'#EA4335', enabled:true },
-    google_cn: { label:'Google News CN', color:'#e6162d', enabled:true },
-    reddit:    { label:'Reddit',          color:'#FF6314', enabled:true },
-    electrek:  { label:'Electrek',        color:'#44cc88', enabled:true },
-    cnevpost:  { label:'CnEVPost',        color:'#4488ff', enabled:true },
-  }
-};
-var BRANDS = ['BYD','NIO','Xpeng','Li Auto','Tesla','Zeekr','Huawei','BMW','Mercedes','Volkswagen','Toyota','Xiaomi Auto','Rivian','Lucid'];
 
-// ── CORS proxies — tried in order until one works ──────────────────────────────
-var PROXIES = [
-  function(u){ return 'https://api.allorigins.win/get?url=' + encodeURIComponent(u); },
-  function(u){ return 'https://corsproxy.io/?' + encodeURIComponent(u); },
-  function(u){ return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); },
+<script>
+// ── Default X accounts to watch ───────────────────────────────────────────────
+var DEFAULT_ACCOUNTS = [
+  { handle:'tphuang',         name:'Tim Huang (China EV)' },
+  { handle:'thinkercar',      name:'Thinker Car' },
+  { handle:'electricfelix',   name:'Felix (EV analyst)' },
+  { handle:'niccruzpatane',   name:'Nic Cruz Patane' },
+  { handle:'SawyerMerritt',   name:'Sawyer Merritt (Tesla)' },
+  { handle:'XuFei_Xiaomi',    name:'Xu Fei — Xiaomi Auto' },
+  { handle:'Alejandroperez',  name:'Alejandro Perez' },
+  { handle:'CnEVPost',        name:'CnEVPost' },
+  { handle:'kimmonismus',     name:'Kim Monismus' },
+  { handle:'NotATeslaApp',    name:'Not A Tesla App' },
+  { handle:'XH_Lee23',        name:'XH Lee' },
+  { handle:'kyleichan',       name:'Kyle Chan' },
+  { handle:'MarcoRPi1',       name:'Marco R.' },
+  { handle:'CarNewsChina',    name:'Car News China' },
+  { handle:'tslaming',        name:'TSla Ming' },
 ];
 
-async function fetchViaProxy(url) {
-  for (var i = 0; i < PROXIES.length; i++) {
-    try {
-      var proxyUrl = PROXIES[i](url);
-      var res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) continue;
-      var json = await res.json();
-      // allorigins wraps in .contents, codetabs returns raw text, corsproxy returns raw text
-      var text = json.contents !== undefined ? json.contents : (typeof json === 'string' ? json : JSON.stringify(json));
-      if (text && text.length > 100) return text;
-    } catch(e) { /* try next */ }
+// ── Nitter instances — tried in order ─────────────────────────────────────────
+var NITTER_INSTANCES = [
+  'https://nitter.poast.org',
+  'https://nitter.privacydev.net',
+  'https://nitter.nl',
+  'https://nitter.esmailelbob.xyz',
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+var SF = {
+  news:[], cat:'all', brandFilter:'', minImportance:1, keywords:[],
+  accounts: JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS)),
+  sources:{
+    google_en:{ label:'Google News EN', color:'#EA4335', enabled:true },
+    google_cn:{ label:'Google News CN', color:'#e6162d', enabled:true },
+    xaccounts:{ label:'X Accounts (Nitter)', color:'#888',    enabled:true },
+    reddit:   { label:'Reddit',          color:'#FF6314', enabled:true },
+    electrek: { label:'Electrek RSS',    color:'#44cc88', enabled:true },
+    cnevpost: { label:'CnEVPost RSS',    color:'#4488ff', enabled:true },
+  }
+};
+var BRANDS=['BYD','NIO','Xpeng','Li Auto','Tesla','Zeekr','Huawei','Yangwang','BMW','Mercedes','Volkswagen','Audi','Skoda','Toyota','Xiaomi Auto','Rivian','Lucid'];
+
+// ── CORS proxies ──────────────────────────────────────────────────────────────
+var PROXIES=[
+  function(u){return 'https://api.allorigins.win/get?url='+encodeURIComponent(u);},
+  function(u){return 'https://corsproxy.io/?'+encodeURIComponent(u);},
+  function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);},
+];
+
+async function fetchProxy(url){
+  for(var i=0;i<PROXIES.length;i++){
+    try{
+      var r=await fetch(PROXIES[i](url),{signal:AbortSignal.timeout(9000)});
+      if(!r.ok) continue;
+      var j=await r.json();
+      var t=j.contents!==undefined?j.contents:(typeof j==='string'?j:JSON.stringify(j));
+      if(t&&t.length>80) return t;
+    }catch(e){}
   }
   return null;
 }
 
-// ── RSS parser ─────────────────────────────────────────────────────────────────
-function parseRSS(xml, srcKey) {
-  try {
-    var doc = new DOMParser().parseFromString(xml, 'text/xml');
+function parseRSS(xml, srcKey){
+  try{
+    var doc=new DOMParser().parseFromString(xml,'text/xml');
     return Array.from(doc.querySelectorAll('item')).slice(0,8).map(function(it){
+      // extract link — RSS link is sometimes in <link> text node or <guid>
+      var link = it.querySelector('link')?.textContent
+               || it.querySelector('guid')?.textContent
+               || '';
+      // Google News wraps real URL inside the link itself
+      if(link.includes('news.google.com')){
+        var m = link.match(/url=([^&]+)/);
+        if(m) try{ link = decodeURIComponent(m[1]); }catch(e){}
+      }
       return {
-        title:   it.querySelector('title')?.textContent || '',
+        title:   it.querySelector('title')?.textContent||'',
         desc:    (it.querySelector('description')?.textContent||'').replace(/<[^>]+>/g,'').slice(0,300),
-        pubDate: it.querySelector('pubDate')?.textContent || '',
-        source:  it.querySelector('source')?.textContent || srcKey,
+        pubDate: it.querySelector('pubDate')?.textContent||'',
+        source:  it.querySelector('source')?.textContent||srcKey,
+        link:    link,
         _src:    srcKey
       };
     });
-  } catch(e) { return []; }
+  }catch(e){return [];}
 }
 
-// ── Persistence ────────────────────────────────────────────────────────────────
-function sfSave() {
-  try { localStorage.setItem('sf_prefs', JSON.stringify({ cat:SF.cat, brandFilter:SF.brandFilter, minImportance:SF.minImportance, keywords:SF.keywords, sources:Object.fromEntries(Object.entries(SF.sources).map(function(e){ return [e[0],e[1].enabled]; })) })); } catch(e){}
+// ── Persistence ───────────────────────────────────────────────────────────────
+function sfSave(){
+  try{localStorage.setItem('sf_prefs',JSON.stringify({
+    cat:SF.cat, brandFilter:SF.brandFilter, minImportance:SF.minImportance,
+    keywords:SF.keywords, accounts:SF.accounts,
+    sources:Object.fromEntries(Object.entries(SF.sources).map(function(e){return[e[0],e[1].enabled];}))
+  }));}catch(e){}
 }
-function sfLoad() {
-  try {
-    var p = JSON.parse(localStorage.getItem('sf_prefs')||'{}');
-    if (p.cat) SF.cat = p.cat;
-    if (p.brandFilter) SF.brandFilter = p.brandFilter;
-    if (p.minImportance) SF.minImportance = p.minImportance;
-    if (p.keywords) SF.keywords = p.keywords;
-    if (p.sources) Object.entries(p.sources).forEach(function(e){ if(SF.sources[e[0]]) SF.sources[e[0]].enabled = e[1]; });
-  } catch(e){}
+function sfLoad(){
+  try{
+    var p=JSON.parse(localStorage.getItem('sf_prefs')||'{}');
+    if(p.cat) SF.cat=p.cat;
+    if(p.brandFilter) SF.brandFilter=p.brandFilter;
+    if(p.minImportance) SF.minImportance=p.minImportance;
+    if(p.keywords) SF.keywords=p.keywords;
+    if(p.accounts) SF.accounts=p.accounts;
+    if(p.sources) Object.entries(p.sources).forEach(function(e){if(SF.sources[e[0]])SF.sources[e[0]].enabled=e[1];});
+  }catch(e){}
 }
 
-// ── UI builders ────────────────────────────────────────────────────────────────
-function sfBuildBrands() {
-  document.getElementById('brand-tags').innerHTML = BRANDS.map(function(b){
+// ── UI builders ───────────────────────────────────────────────────────────────
+function sfBuildBrands(){
+  document.getElementById('brand-tags').innerHTML=BRANDS.map(function(b){
     return '<span class="brand-tag'+(SF.brandFilter===b?' active':'')+'" onclick="sfToggleBrand(\''+b+'\')">'+b+'</span>';
   }).join('');
 }
-function sfBuildSources() {
-  document.getElementById('source-list').innerHTML = Object.entries(SF.sources).map(function(e){
-    var k=e[0], s=e[1];
+function sfBuildSources(){
+  document.getElementById('source-list').innerHTML=Object.entries(SF.sources).map(function(e){
+    var k=e[0],s=e[1];
     return '<div class="source-row"><span class="source-label"><span class="source-dot" style="background:'+s.color+'"></span>'+s.label+'</span><label class="toggle"><input type="checkbox" '+(s.enabled?'checked':'')+' onchange="sfToggleSource(\''+k+'\',this.checked)"/><span class="toggle-slider"></span></label></div>';
   }).join('');
 }
-function sfBuildKeywords() {
-  document.getElementById('keyword-list').innerHTML = SF.keywords.length
-    ? SF.keywords.map(function(kw,i){ return '<div class="keyword-item"><span style="color:var(--accent)">⬡</span>&nbsp;'+kw+'<button onclick="sfRemoveKeyword('+i+')" aria-label="Remove">×</button></div>'; }).join('')
-    : '<div style="font-size:11px;color:var(--text3);padding:4px 0">No keywords yet</div>';
+function sfBuildKeywords(){
+  document.getElementById('keyword-list').innerHTML=SF.keywords.length
+    ?SF.keywords.map(function(kw,i){return '<div class="keyword-item"><span style="color:var(--accent)">⬡</span>&nbsp;'+kw+'<button onclick="sfRemoveKeyword('+i+')" aria-label="Remove">×</button></div>';}).join('')
+    :'<div style="font-size:11px;color:var(--text3);padding:4px 0">No keywords yet</div>';
 }
-function sfBadgeStyle(src) {
-  var c = {google:'#EA4335',google_en:'#EA4335',google_cn:'#e6162d',reddit:'#FF6314',electrek:'#44cc88',cnevpost:'#4488ff',press:'#4488ff',web:'#44cc88'}[src]||'#888';
+function sfBuildAccounts(){
+  document.getElementById('account-list').innerHTML=SF.accounts.length
+    ?SF.accounts.map(function(a,i){
+      return '<div class="account-item">'
+        +'<span><span class="account-handle">@'+a.handle+'</span>'
+        +(a.name&&a.name!==a.handle?'<span class="account-name"> · '+a.name+'</span>':'')
+        +'</span>'
+        +'<button onclick="sfRemoveAccount('+i+')" aria-label="Remove">×</button>'
+        +'</div>';
+    }).join('')
+    :'<div style="font-size:11px;color:var(--text3);padding:4px 0">No accounts added</div>';
+}
+
+function sfBadgeStyle(src){
+  var c={google:'#EA4335',google_en:'#EA4335',google_cn:'#e6162d',reddit:'#FF6314',electrek:'#44cc88',cnevpost:'#4488ff',press:'#4488ff',x:'#888',nitter:'#888',web:'#44cc88'}[src]||'#888';
   return 'background:'+c+'20;color:'+c+';border:1px solid '+c+'40;';
 }
-function sfDots(n) {
-  return [1,2,3,4,5].map(function(i){ var c=i<=n?(n>=4?'var(--red)':n>=3?'var(--orange)':'var(--green)'):'var(--border2)'; return '<span class="imp-dot" style="background:'+c+'"></span>'; }).join('');
+function sfDots(n){
+  return[1,2,3,4,5].map(function(i){var c=i<=n?(n>=4?'var(--red)':n>=3?'var(--orange)':'var(--green)'):'var(--border2)';return'<span class="imp-dot" style="background:'+c+'"></span>';}).join('');
 }
-function sfSentiment(s) {
-  if(s==='bullish') return '<span style="color:var(--green);font-size:12px" title="Bullish">↑</span>';
-  if(s==='bearish') return '<span style="color:var(--red);font-size:12px" title="Bearish">↓</span>';
+function sfSenti(s){
+  if(s==='bullish') return '<span style="color:var(--green);font-size:12px">↑</span>';
+  if(s==='bearish') return '<span style="color:var(--red);font-size:12px">↓</span>';
   return '<span style="color:var(--text3);font-size:12px">—</span>';
 }
 
-// ── Filters ────────────────────────────────────────────────────────────────────
-function sfSetCat(el,cat){ SF.cat=cat; document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');}); el.classList.add('active'); sfSave(); sfRender(); }
-function sfToggleBrand(b){ SF.brandFilter=SF.brandFilter===b?'':b; sfBuildBrands(); sfSave(); sfRender(); }
-function sfToggleSource(k,v){ SF.sources[k].enabled=v; sfSave(); }
-function sfOnImportance(v){ SF.minImportance=parseInt(v); document.getElementById('importance-val').textContent=v+'+'; sfSave(); sfRender(); }
-function sfAddKeyword(){ var inp=document.getElementById('kw-input'); var kw=inp.value.trim(); if(kw&&!SF.keywords.includes(kw)){SF.keywords.push(kw);sfBuildKeywords();sfSave();sfRender();} inp.value=''; }
-function sfRemoveKeyword(i){ SF.keywords.splice(i,1); sfBuildKeywords(); sfSave(); sfRender(); }
+// ── Filters ───────────────────────────────────────────────────────────────────
+function sfSetCat(el,cat){SF.cat=cat;document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});el.classList.add('active');sfSave();sfRender();}
+function sfToggleBrand(b){SF.brandFilter=SF.brandFilter===b?'':b;sfBuildBrands();sfSave();sfRender();}
+function sfToggleSource(k,v){SF.sources[k].enabled=v;sfSave();}
+function sfOnImportance(v){SF.minImportance=parseInt(v);document.getElementById('importance-val').textContent=v+'+';sfSave();sfRender();}
+function sfAddKeyword(){var inp=document.getElementById('kw-input');var kw=inp.value.trim();if(kw&&!SF.keywords.includes(kw)){SF.keywords.push(kw);sfBuildKeywords();sfSave();sfRender();}inp.value='';}
+function sfRemoveKeyword(i){SF.keywords.splice(i,1);sfBuildKeywords();sfSave();sfRender();}
+function sfAddAccount(){
+  var inp=document.getElementById('acc-input');
+  var h=inp.value.trim().replace(/^@/,'');
+  if(h&&!SF.accounts.find(function(a){return a.handle.toLowerCase()===h.toLowerCase();})){
+    SF.accounts.push({handle:h,name:h});
+    sfBuildAccounts();sfSave();
+  }
+  inp.value='';
+}
+function sfRemoveAccount(i){SF.accounts.splice(i,1);sfBuildAccounts();sfSave();}
 
-// ── Render ─────────────────────────────────────────────────────────────────────
-function sfRender() {
-  var q = (document.getElementById('search-input')?.value||'').toLowerCase();
-  var filtered = SF.news.filter(function(item){
-    if(SF.cat!=='all' && item.category!==SF.cat) return false;
-    if(SF.brandFilter && !(item.brand||'').toLowerCase().includes(SF.brandFilter.toLowerCase()) && !(item.headline||'').toLowerCase().includes(SF.brandFilter.toLowerCase())) return false;
+// ── Render ────────────────────────────────────────────────────────────────────
+function sfRender(){
+  var q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  var filtered=SF.news.filter(function(item){
+    if(SF.cat!=='all'&&item.category!==SF.cat) return false;
+    if(SF.brandFilter&&!(item.brand||'').toLowerCase().includes(SF.brandFilter.toLowerCase())&&!(item.headline||'').toLowerCase().includes(SF.brandFilter.toLowerCase())) return false;
     if((item.importance||1)<SF.minImportance) return false;
-    if(q && !(item.headline||'').toLowerCase().includes(q) && !(item.brand||'').toLowerCase().includes(q) && !(item.summary||'').toLowerCase().includes(q) && !(item.tags||[]).some(function(t){return t.toLowerCase().includes(q);})) return false;
+    if(q&&!(item.headline||'').toLowerCase().includes(q)&&!(item.brand||'').toLowerCase().includes(q)&&!(item.summary||'').toLowerCase().includes(q)&&!(item.tags||[]).some(function(t){return t.toLowerCase().includes(q);})) return false;
     return true;
-  }).sort(function(a,b){return (b.importance||0)-(a.importance||0);});
+  }).sort(function(a,b){return(b.importance||0)-(a.importance||0);});
 
-  document.getElementById('st-total').textContent    = SF.news.length;
-  document.getElementById('st-breaking').textContent = SF.news.filter(function(i){return i.importance>=4;}).length;
-  document.getElementById('st-china').textContent    = SF.news.filter(function(i){return i.region==='China';}).length;
-  document.getElementById('st-bullish').textContent  = SF.news.filter(function(i){return i.sentiment==='bullish';}).length;
-  ['all','china','ev','tech','press','social'].forEach(function(c){
+  document.getElementById('st-total').textContent   =SF.news.length;
+  document.getElementById('st-breaking').textContent=SF.news.filter(function(i){return i.importance>=4;}).length;
+  document.getElementById('st-china').textContent   =SF.news.filter(function(i){return i.region==='China';}).length;
+  document.getElementById('st-bullish').textContent =SF.news.filter(function(i){return i.sentiment==='bullish';}).length;
+  ['all','china','ev','tech','press','social','charging'].forEach(function(c){
     var el=document.getElementById('nc-'+c);
-    if(el) el.textContent = c==='all'?SF.news.length:SF.news.filter(function(i){return i.category===c;}).length;
+    if(el) el.textContent=c==='all'?SF.news.length:SF.news.filter(function(i){return i.category===c;}).length;
   });
-  document.getElementById('result-count').textContent = filtered.length+' signal'+(filtered.length!==1?'s':'');
+  document.getElementById('result-count').textContent=filtered.length+' signal'+(filtered.length!==1?'s':'');
 
-  var feed = document.getElementById('feed');
+  var feed=document.getElementById('feed');
   if(!filtered.length){
     feed.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-label">'+(SF.news.length?'No signals match this filter':'Hit Refresh to load today\'s intelligence')+'</div></div>';
     return;
   }
-  feed.innerHTML = filtered.map(function(item,idx){
+  feed.innerHTML=filtered.map(function(item,idx){
     var breaking=item.importance>=4;
     var t=item.timestamp?new Date(item.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
-    var hasKw=SF.keywords.some(function(kw){return (item.headline||'').toLowerCase().includes(kw.toLowerCase())||(item.summary||'').toLowerCase().includes(kw.toLowerCase());});
-    var tags=(item.tags||[]).slice(0,5).map(function(t){return '<span class="card-tag">#'+t+'</span>';}).join('');
+    var hasKw=SF.keywords.some(function(kw){return(item.headline||'').toLowerCase().includes(kw.toLowerCase())||(item.summary||'').toLowerCase().includes(kw.toLowerCase());});
+    var tags=(item.tags||[]).slice(0,5).map(function(t){return'<span class="card-tag">#'+t+'</span>';}).join('');
+    // headline — link if URL exists
+    var url=item.url||item.link||'';
+    var headlineHtml=url
+      ?'<a href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+(item.headline||'')+'</a>'
+      :(item.headline||'');
+    // source link
+    var srcLink=url
+      ?'<a class="card-source-link" href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open source ↗</a>'
+      :'';
     return '<div class="news-card'+(breaking?' breaking':'')+'" style="animation-delay:'+Math.min(idx*0.04,0.5)+'s'+(hasKw?';border-color:#c8f06040':'')+'" onclick="sfExpand(this)">'
       +'<div class="card-top"><div class="card-meta">'
       +'<span class="card-badge" style="'+sfBadgeStyle(item.source)+'">'+(item.sourceLabel||item.source||'web')+'</span>'
       +(item.brand?'<span class="card-brand">'+item.brand+'</span>':'')
       +(breaking?'<span class="breaking-label"><span class="breaking-dot"></span>BREAKING</span>':'')
-      +(hasKw?'<span class="card-badge" style="background:#c8f06020;color:var(--accent);border-color:#8ab84040">⬡ keyword</span>':'')
+      +(hasKw?'<span class="card-badge" style="background:#c8f06020;color:var(--accent);border-color:#8ab84040">⬡ alert</span>':'')
       +'</div><span class="card-region">'+(item.region||'')+'</span></div>'
-      +'<div class="card-headline">'+(item.headline||'')+'</div>'
+      +'<div class="card-headline card-toggle">'+headlineHtml+'</div>'
       +'<div class="card-bottom"><div class="importance-dots">'+sfDots(item.importance||2)+'</div>'
-      +'<div style="display:flex;align-items:center;gap:8px">'+sfSentiment(item.sentiment)+'<span class="card-time">'+t+'</span></div></div>'
-      +'<div class="card-expand"><p class="card-summary">'+(item.summary||'')+'</p><div class="card-tags">'+tags+'</div></div>'
-      +'</div>';
+      +'<div style="display:flex;align-items:center;gap:8px">'+sfSenti(item.sentiment)+'<span class="card-time">'+t+'</span></div></div>'
+      +'<div class="card-expand">'
+      +'<p class="card-summary">'+(item.summary||'')+'</p>'
+      +'<div class="card-footer"><div class="card-tags">'+tags+'</div>'+srcLink+'</div>'
+      +'</div></div>';
   }).join('');
 }
-function sfExpand(el){ el.querySelector('.card-expand').classList.toggle('open'); el.classList.toggle('expanded'); }
+function sfExpand(el){el.querySelector('.card-expand').classList.toggle('open');el.classList.toggle('expanded');}
 
-// ── Progress ───────────────────────────────────────────────────────────────────
-function sfProgress(pct, label) {
-  document.getElementById('progress-bar-fill').style.width = pct+'%';
-  document.getElementById('progress-label').textContent = label;
+// ── Progress ──────────────────────────────────────────────────────────────────
+function sfProgress(pct,label){
+  document.getElementById('progress-bar-fill').style.width=pct+'%';
+  document.getElementById('progress-label').textContent=label;
 }
 
-// ── Feed gathering ─────────────────────────────────────────────────────────────
-async function sfGatherFeeds() {
-  var raw = [];
-  var ok  = [];
-  var fail= [];
-  var tasks = [];
+// ── Nitter RSS for X accounts ─────────────────────────────────────────────────
+async function fetchNitterAccount(handle){
+  for(var n=0;n<NITTER_INSTANCES.length;n++){
+    var url=NITTER_INSTANCES[n]+'/'+handle+'/rss';
+    var text=await fetchProxy(url);
+    if(!text) continue;
+    var items=parseRSS(text,'x');
+    if(items.length){
+      return items.map(function(it){
+        // build real twitter link from nitter link
+        var tweetLink=it.link?it.link.replace(NITTER_INSTANCES[n],'https://x.com').replace('/nitter.','https://x.com/'):('https://x.com/'+handle);
+        return Object.assign({},it,{link:tweetLink,_xhandle:'@'+handle});
+      });
+    }
+  }
+  return [];
+}
 
-  function addTask(label, url, srcKey) {
-    tasks.push(
-      fetchViaProxy(url).then(function(text){
-        if (!text) { fail.push(label); return; }
-        var items = parseRSS(text, srcKey);
-        items.forEach(function(i){ raw.push(i); });
-        if (items.length) ok.push(label+' ('+items.length+')');
-        else fail.push(label+' (empty)');
-      }).catch(function(){ fail.push(label); })
-    );
+// ── Feed gathering ────────────────────────────────────────────────────────────
+async function sfGatherFeeds(){
+  var raw=[];
+  var ok=[];
+  var fail=[];
+  var tasks=[];
+
+  function addRSS(label,url,srcKey){
+    tasks.push(fetchProxy(url).then(function(text){
+      if(!text){fail.push(label);return;}
+      var items=parseRSS(text,srcKey);
+      items.forEach(function(i){raw.push(i);});
+      if(items.length) ok.push(label+' ('+items.length+')');
+      else fail.push(label+' (empty)');
+    }).catch(function(){fail.push(label);}));
   }
 
-  if (SF.sources.google_en.enabled) {
-    [
-      ['China EV EN', 'BYD NIO Xpeng Li Auto Zeekr electric car 2026'],
-      ['Tesla EN',    'Tesla new model FSD 2026'],
-      ['Auto Tech EN','autonomous driving AI automotive 2026'],
-      ['Brand Press', 'BMW Mercedes Volkswagen Toyota new car 2026'],
-      ['EV Industry', 'electric vehicle battery launch 2026'],
-    ].forEach(function(q){
-      addTask(q[0], 'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=en&gl=US&ceid=US:en', 'google_en');
-    });
+  if(SF.sources.google_en.enabled){
+    [['China EV','BYD NIO Xpeng Li Auto Zeekr electric car 2026'],
+     ['Tesla','Tesla new model FSD autonomous 2026'],
+     ['Auto AI','autonomous driving AI automotive 2026'],
+     ['Brands','BMW Mercedes Volkswagen Toyota new car announcement 2026'],
+     ['EV Biz','electric vehicle battery launch reveal 2026'],
+     ['Charging','EV charging infrastructure megawatt charger NACS CCS 2026'],
+     ['Charging CN','充电桩 超级充电站 快充 兆瓦充电 2026'],
+    ].forEach(function(q){addRSS(q[0],'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=en&gl=US&ceid=US:en','google_en');});
   }
 
-  if (SF.sources.google_cn.enabled) {
-    [
-      ['China EV CN',   '比亚迪 蔚来 小鹏 新能源汽车 新车'],
-      ['China Auto CN', '华为 问界 小米汽车 极氪 发布 2026'],
-    ].forEach(function(q){
-      addTask(q[0], 'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=zh-CN&gl=CN&ceid=CN:zh-Hans', 'google_cn');
-    });
+  if(SF.sources.google_cn.enabled){
+    [['CN EV','比亚迪 蔚来 小鹏 新能源汽车 新车 2026'],
+     ['CN Auto','华为 问界 小米汽车 极氪 发布 2026'],
+    ].forEach(function(q){addRSS(q[0],'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=zh-CN&gl=CN&ceid=CN:zh-Hans','google_cn');});
   }
 
-  if (SF.sources.reddit.enabled) {
+  if(SF.sources.electrek.enabled)  addRSS('Electrek','https://electrek.co/feed/','electrek');
+  if(SF.sources.cnevpost.enabled)   addRSS('CnEVPost','https://cnevpost.com/feed/','cnevpost');
+
+  if(SF.sources.reddit.enabled){
     ['electricvehicles','teslamotors','chinaEV','cars'].forEach(function(sub){
       tasks.push(
-        fetchViaProxy('https://www.reddit.com/r/'+sub+'/hot.json?limit=8').then(function(text){
-          if (!text) { fail.push('r/'+sub); return; }
-          try {
-            var data = JSON.parse(text);
-            var posts = data.data?.children || [];
+        fetchProxy('https://www.reddit.com/r/'+sub+'/hot.json?limit=8').then(function(text){
+          if(!text){fail.push('r/'+sub);return;}
+          try{
+            var data=JSON.parse(text);
+            var posts=data.data?.children||[];
             posts.forEach(function(p){
-              raw.push({ title:p.data.title, desc:(p.data.selftext||'').slice(0,250), pubDate:new Date(p.data.created_utc*1000).toUTCString(), source:'r/'+sub, _src:'reddit' });
+              raw.push({title:p.data.title,desc:(p.data.selftext||'').slice(0,250),
+                pubDate:new Date(p.data.created_utc*1000).toUTCString(),
+                source:'r/'+sub,link:'https://reddit.com'+p.data.permalink,_src:'reddit'});
             });
             ok.push('r/'+sub+' ('+posts.length+')');
-          } catch(e){ fail.push('r/'+sub); }
-        }).catch(function(){ fail.push('r/'+sub); })
+          }catch(e){fail.push('r/'+sub);}
+        }).catch(function(){fail.push('r/'+sub);})
       );
     });
   }
 
-  if (SF.sources.electrek.enabled)  addTask('Electrek', 'https://electrek.co/feed/', 'electrek');
-  if (SF.sources.cnevpost.enabled)   addTask('CnEVPost', 'https://cnevpost.com/feed/', 'cnevpost');
+  if(SF.sources.xaccounts.enabled&&SF.accounts.length){
+    SF.accounts.forEach(function(acc){
+      tasks.push(
+        fetchNitterAccount(acc.handle).then(function(items){
+          if(items.length){
+            items.forEach(function(i){raw.push(i);});
+            ok.push('@'+acc.handle+' ('+items.length+')');
+          } else {
+            fail.push('@'+acc.handle);
+          }
+        })
+      );
+    });
+  }
 
   await Promise.allSettled(tasks);
 
-  // Show source status
-  var statusEl = document.getElementById('source-status');
-  statusEl.innerHTML =
-    (ok.length   ? '<span style="color:var(--green)">✓ '+ok.join(', ')+'</span><br>' : '') +
-    (fail.length  ? '<span style="color:var(--text3)">✗ '+fail.join(', ')+'</span>' : '');
+  document.getElementById('source-status').innerHTML=
+    (ok.length  ?'<span style="color:var(--green)">✓ '+ok.join(', ')+'</span><br>':'')+
+    (fail.length?'<span style="color:var(--text3)">✗ '+fail.join(', ')+'</span>':'');
 
   return raw;
 }
 
-// ── Claude analysis ────────────────────────────────────────────────────────────
-var SF_SYS = 'You are an automotive and tech intelligence analyst. Given raw RSS/news items, curate, deduplicate and score them. Return ONLY a valid JSON object with two keys:\n1. "briefing": a 2-3 sentence morning summary of the most important themes today (plain text)\n2. "items": array of 12-20 curated news items\n\nEach item: { id, headline (≤12 words punchy), summary (2-3 sentences with specific facts), brand (or null), category ("china"|"ev"|"tech"|"press"|"social"), source (short key), sourceLabel (readable label), sentiment ("bullish"|"neutral"|"bearish"), importance (1-5), region ("China"|"Global"|"US"|"Europe"), timestamp (ISO today), tags (3-5 strings) }\n\nPrioritise: China EV launches, Tesla, AI/autonomous driving, major brand news. If feeds are thin, add 2-3 high-signal items from your own knowledge. Return ONLY the JSON, no markdown fences.';
+// ── Claude ────────────────────────────────────────────────────────────────────
+var SF_SYS='You are an automotive and tech intelligence analyst. Curate, deduplicate and score the raw RSS/social items provided. Return ONLY a valid JSON object with:\n1. "briefing": 2-3 sentence morning summary of the most important themes (plain text)\n2. "items": array of 12-20 curated news items\n\nEach item MUST include:\n{ id (unique string), headline (≤12 words, punchy present tense), summary (2-3 sentences with specific facts/specs/prices where available), brand (primary brand or null), category ("china"|"ev"|"tech"|"press"|"social"|"charging"), source (short key e.g. "google_en","google_cn","reddit","electrek","cnevpost","x"), sourceLabel (readable e.g. "Google News","Electrek","X/Twitter","Reddit"), sentiment ("bullish"|"neutral"|"bearish"), importance (1-5, 5=breaking), region ("China"|"Global"|"US"|"Europe"), timestamp (ISO string today), url (original article/tweet URL — MUST include if available in source data, else null), tags (3-5 lowercase strings) }\n\nCRITICAL: Always copy the url/link from the source data into the "url" field. For X/Twitter items, include the tweet link. Prioritise China EV, Tesla, AI/autonomous driving, major brand news, charging infrastructure (megawatt charging, NACS, CCS, charging networks, Supercharger, battery swapping). Use category "charging" for anything about charging infrastructure, charger tech, charging networks, battery swap stations. Return ONLY JSON, no markdown.';
 
-// ── Main fetch ─────────────────────────────────────────────────────────────────
-async function sfFetch() {
-  var btn  = document.getElementById('refresh-btn');
-  var icon = document.getElementById('refresh-icon');
-  var lbl  = document.getElementById('refresh-label');
-  btn.disabled = true;
-  icon.className = 'spinning'; lbl.textContent = 'Scanning…';
-  document.getElementById('progress-bar-wrap').style.display = 'block';
-  document.getElementById('error-msg').style.display = 'none';
+async function sfFetch(){
+  var btn=document.getElementById('refresh-btn');
+  var icon=document.getElementById('refresh-icon');
+  var lbl=document.getElementById('refresh-label');
+  btn.disabled=true; icon.className='spinning'; lbl.textContent='Scanning…';
+  document.getElementById('progress-bar-wrap').style.display='block';
+  document.getElementById('error-msg').style.display='none';
   document.getElementById('briefing-card').classList.remove('visible');
-  document.getElementById('source-status').textContent = '';
+  document.getElementById('source-status').textContent='';
 
-  sfProgress(5, 'Connecting to news sources…');
+  sfProgress(5,'Connecting to sources…');
+  var raw=[];
+  try{raw=await sfGatherFeeds();}catch(e){console.warn(e);}
+  sfProgress(62,'Gathered '+raw.length+' items — curating with Claude…');
 
-  var raw = [];
-  try { raw = await sfGatherFeeds(); } catch(e){ console.warn(e); }
+  var today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var kwNote=SF.keywords.length?'\nFlag items matching these keywords with importance boost: '+SF.keywords.join(', '):'';
+  var accNote=SF.accounts.length?'\nX accounts being tracked: '+SF.accounts.map(function(a){return'@'+a.handle;}).join(', '):'';
 
-  sfProgress(62, 'Gathered '+raw.length+' items — asking Claude to curate…');
+  var userPrompt='Today is '+today+'.'+kwNote+accNote+'\n\n'
+    +(raw.length
+      ?'Here are '+raw.length+' raw items. Curate and return as JSON. IMPORTANT: copy the link/url field into each item\'s url field:\n\n'
+        +raw.slice(0,80).map(function(r,i){
+          return '['+(i+1)+'] SRC:'+r._src+(r._xhandle?' ACCOUNT:'+r._xhandle:'')+' | '+r.source
+            +'\nTITLE: '+r.title
+            +'\nLINK: '+(r.link||'')
+            +'\nDESC: '+r.desc
+            +'\nDATE: '+r.pubDate;
+        }).join('\n---\n')
+      :'No RSS items loaded (proxy issue). Generate today\'s automotive intelligence from your own knowledge — focus on China EV, Tesla, AI/autonomous driving, major brand news from this week.');
 
-  var today = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  var kwNote = SF.keywords.length ? '\nFlag items matching keywords: '+SF.keywords.join(', ') : '';
-
-  // Even if 0 items from feeds, Claude will use its own knowledge
-  var userPrompt = 'Today is '+today+'.'+kwNote+'\n\n'
-    + (raw.length
-        ? 'Here are '+raw.length+' raw items from news feeds. Curate, score and return as JSON:\n\n'
-          + raw.slice(0,70).map(function(r,i){ return '['+(i+1)+'] SOURCE:'+r._src+' | '+r.source+'\nTITLE: '+r.title+'\nDESC: '+r.desc+'\nDATE: '+r.pubDate; }).join('\n---\n')
-        : 'The RSS feeds returned no items (proxy issue). Please generate today\'s automotive intelligence briefing entirely from your own knowledge — focus on the most recent China EV launches, Tesla news, autonomous driving, and major brand announcements.');
-
-  try {
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:5000, system:SF_SYS, messages:[{role:'user',content:userPrompt}] })
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5000,system:SF_SYS,messages:[{role:'user',content:userPrompt}]})
     });
-    sfProgress(90, 'Rendering signals…');
-    var data = await resp.json();
-    if (data.error) throw new Error(data.error.message);
-    var text = (data.content||[]).map(function(c){return c.type==='text'?c.text:'';}).join('\n');
-    var clean = text.replace(/```json|```/g,'').trim();
-    // find the JSON object
-    var match = clean.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Claude returned unexpected format. Raw: '+clean.slice(0,200));
-    var parsed = JSON.parse(match[0]);
-
-    SF.news = Array.isArray(parsed) ? parsed : (parsed.items || []);
-
-    if (parsed.briefing) {
-      document.getElementById('briefing-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-      document.getElementById('briefing-text').textContent = parsed.briefing;
+    sfProgress(90,'Rendering signals…');
+    var data=await resp.json();
+    if(data.error) throw new Error(data.error.message);
+    var text=(data.content||[]).map(function(c){return c.type==='text'?c.text:'';}).join('\n');
+    var clean=text.replace(/```json|```/g,'').trim();
+    var match=clean.match(/\{[\s\S]*\}/);
+    if(!match) throw new Error('Unexpected response format: '+clean.slice(0,200));
+    var parsed=JSON.parse(match[0]);
+    SF.news=Array.isArray(parsed)?parsed:(parsed.items||[]);
+    if(parsed.briefing){
+      document.getElementById('briefing-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+      document.getElementById('briefing-text').textContent=parsed.briefing;
       document.getElementById('briefing-card').classList.add('visible');
     }
-
-    sfProgress(100, SF.news.length+' signals loaded'+(raw.length===0?' (knowledge-based — feeds unavailable)':''));
-    document.getElementById('last-update').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    sfProgress(100,SF.news.length+' signals loaded');
+    document.getElementById('last-update').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     sfRender();
-    setTimeout(function(){ document.getElementById('progress-bar-wrap').style.display='none'; }, 2000);
-
-  } catch(e) {
-    var err = document.getElementById('error-msg');
-    err.style.display = 'block';
-    err.innerHTML = '<strong>Error loading signals:</strong> '+e.message
-      +'<br><br>This is usually a temporary issue. <strong>Try clicking Refresh again</strong> — it tries multiple proxy servers automatically.'
-      +'<br><br>If it keeps failing, the dashboard will still work using Claude\'s built-in knowledge of recent auto news.';
-    document.getElementById('progress-bar-wrap').style.display = 'none';
+    setTimeout(function(){document.getElementById('progress-bar-wrap').style.display='none';},2000);
+  }catch(e){
+    var err=document.getElementById('error-msg');
+    err.style.display='block';
+    err.innerHTML='<strong>Error:</strong> '+e.message+'<br><br><strong>Try clicking Refresh again</strong> — it automatically tries multiple proxy servers. If it keeps failing, signals will load from Claude\'s built-in knowledge.';
+    document.getElementById('progress-bar-wrap').style.display='none';
   }
-
   btn.disabled=false; icon.className=''; icon.textContent='↺'; lbl.textContent='Refresh';
 }
 
-// ── Init ───────────────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 sfLoad();
 sfBuildBrands();
 sfBuildSources();
 sfBuildKeywords();
-document.getElementById('importance-range').value = SF.minImportance;
-document.getElementById('importance-val').textContent = SF.minImportance+'+';
-document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.toggle('active', n.dataset.cat===SF.cat); });
+sfBuildAccounts();
+document.getElementById('importance-range').value=SF.minImportance;
+document.getElementById('importance-val').textContent=SF.minImportance+'+';
+document.querySelectorAll('.nav-item').forEach(function(n){n.classList.toggle('active',n.dataset.cat===SF.cat);});
 sfRender();
 sfFetch();
 </script>
