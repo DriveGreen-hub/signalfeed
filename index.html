@@ -8,277 +8,118 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0a0a0a;
-    --bg2: #111111;
-    --bg3: #161616;
-    --border: #1e1e1e;
-    --border2: #282828;
-    --text: #e8e8e0;
-    --text2: #888880;
-    --text3: #444440;
-    --accent: #c8f060;
-    --accent2: #8ab840;
-    --red: #ff4444;
-    --orange: #ff9900;
-    --green: #44cc88;
-    --blue: #4488ff;
-    --china: #e6162d;
-    --font-head: 'Syne', sans-serif;
-    --font-serif: 'DM Serif Display', serif;
-    --font-body: 'DM Sans', sans-serif;
-    --radius: 6px;
-    --radius-lg: 10px;
+    --bg:#0a0a0a; --bg2:#111111; --bg3:#161616; --border:#1e1e1e; --border2:#282828;
+    --text:#e8e8e0; --text2:#888880; --text3:#444440;
+    --accent:#c8f060; --accent2:#8ab840; --red:#ff4444; --orange:#ff9900;
+    --green:#44cc88; --blue:#4488ff; --china:#e6162d;
+    --font-head:'Syne',sans-serif; --font-serif:'DM Serif Display',serif;
+    --font-body:'DM Sans',sans-serif; --radius:6px; --radius-lg:10px;
   }
-
-  html { font-size: 14px; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
-
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-  /* Layout */
-  #app { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
-
-  /* Topbar */
-  #topbar {
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    position: sticky; top: 0; z-index: 200;
-    padding: 0 24px;
-    display: flex; align-items: stretch; justify-content: space-between;
-    height: 56px;
-  }
-  #topbar-left { display: flex; align-items: center; gap: 20px; }
-  #logo { font-family: var(--font-head); font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); text-decoration: none; }
-  #logo span { color: var(--accent); }
-  #topbar-right { display: flex; align-items: center; gap: 12px; }
-  #last-update { font-size: 11px; color: var(--text3); font-family: var(--font-head); letter-spacing: 0.04em; }
-
-  /* Main layout */
-  #main { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 56px); }
-
-  /* Sidebar */
-  #sidebar {
-    border-right: 1px solid var(--border);
-    padding: 20px 16px;
-    position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
-    display: flex; flex-direction: column; gap: 28px;
-    background: var(--bg);
-  }
-
-  .sidebar-section-title {
-    font-size: 9px; font-family: var(--font-head); letter-spacing: 0.15em;
-    color: var(--text3); text-transform: uppercase; margin-bottom: 10px;
-  }
-
-  /* Stats */
-  #stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
-  .stat-num { font-size: 22px; font-family: var(--font-head); font-weight: 700; line-height: 1; margin-bottom: 3px; }
-  .stat-label { font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
-
-  /* Nav */
-  .nav-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 7px 10px; border-radius: var(--radius); cursor: pointer;
-    font-size: 12px; font-family: var(--font-head); font-weight: 500;
-    color: var(--text2); transition: all 0.15s; border: 1px solid transparent;
-    user-select: none;
-  }
-  .nav-item:hover { background: var(--bg2); color: var(--text); }
-  .nav-item.active { background: var(--bg3); color: var(--accent); border-color: var(--border); }
-  .nav-item .nav-icon { font-size: 14px; margin-right: 8px; opacity: 0.7; }
-  .nav-count { font-size: 10px; color: var(--text3); font-weight: 400; }
-  .nav-item.active .nav-count { color: var(--accent2); }
-
-  /* Brand tags */
-  #brand-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-  .brand-tag {
-    font-size: 10px; font-family: var(--font-head); padding: 3px 8px;
-    border: 1px solid var(--border); border-radius: 3px; cursor: pointer;
-    color: var(--text3); transition: all 0.15s; background: none;
-  }
-  .brand-tag:hover { color: var(--text); border-color: var(--border2); }
-  .brand-tag.active { color: var(--accent); border-color: var(--accent2); background: #c8f06010; }
-
-  /* Keywords */
-  #keyword-list { display: flex; flex-direction: column; gap: 5px; }
-  .keyword-item {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 5px 8px; font-size: 11px; color: var(--text2);
-  }
-  .keyword-item button { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 2px; }
-  .keyword-item button:hover { color: var(--red); }
-  #keyword-input-row { display: flex; gap: 5px; margin-top: 5px; }
-  #keyword-input-row input { flex: 1; min-width: 0; }
-  #keyword-input-row button { flex-shrink: 0; font-size: 11px; padding: 5px 10px; white-space: nowrap; }
-
-  /* Sources toggle */
-  #source-list { display: flex; flex-direction: column; gap: 5px; }
-  .source-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 5px 8px; border-radius: var(--radius); background: var(--bg2);
-    border: 1px solid var(--border); font-size: 11px;
-  }
-  .source-dot { width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; flex-shrink: 0; }
-  .source-label { color: var(--text2); display: flex; align-items: center; }
-  .toggle { position: relative; width: 28px; height: 16px; cursor: pointer; flex-shrink: 0; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider {
-    position: absolute; inset: 0; background: var(--border2); border-radius: 8px; transition: 0.2s;
-  }
-  .toggle-slider::before {
-    content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%;
-    background: var(--text3); bottom: 3px; left: 3px; transition: 0.2s;
-  }
-  .toggle input:checked + .toggle-slider { background: var(--accent2); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(12px); background: var(--bg); }
-
-  /* Importance filter */
-  #importance-wrap { display: flex; align-items: center; gap: 10px; }
-  #importance-wrap input[type=range] { flex: 1; accent-color: var(--accent); }
-  #importance-val { font-size: 11px; color: var(--accent); font-family: var(--font-head); min-width: 16px; }
-
-  /* Content */
-  #content { padding: 20px 24px; max-width: 900px; }
-
-  /* Briefing card */
-  #briefing-card {
-    background: linear-gradient(135deg, #141a0e 0%, #0f1a0a 100%);
-    border: 1px solid #2a3820; border-radius: var(--radius-lg);
-    padding: 18px 20px; margin-bottom: 20px; display: none;
-  }
-  #briefing-card.visible { display: block; }
-  #briefing-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  #briefing-date { font-size: 10px; font-family: var(--font-head); color: var(--accent2); letter-spacing: 0.1em; text-transform: uppercase; }
-  #briefing-title { font-size: 13px; font-family: var(--font-head); font-weight: 700; color: var(--accent); margin-bottom: 8px; }
-  #briefing-text { font-size: 13px; color: #a8c880; line-height: 1.7; }
-
-  /* Search */
-  #search-bar {
-    display: flex; gap: 8px; margin-bottom: 16px; align-items: center;
-  }
-  #search-input {
-    flex: 1; background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius); color: var(--text); padding: 8px 14px;
-    font-size: 12px; font-family: var(--font-body); outline: none; transition: border 0.15s;
-  }
-  #search-input:focus { border-color: var(--border2); }
-  #search-input::placeholder { color: var(--text3); }
-  #result-count { font-size: 10px; color: var(--text3); font-family: var(--font-head); letter-spacing: 0.06em; white-space: nowrap; }
-
-  /* Progress */
-  #progress-bar-wrap { margin-bottom: 16px; display: none; }
-  #progress-bar-bg { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
-  #progress-bar-fill { height: 100%; background: var(--accent); border-radius: 1px; transition: width 0.6s ease; width: 0%; }
-  #progress-label { font-size: 10px; color: var(--text3); font-family: var(--font-head); letter-spacing: 0.06em; margin-top: 6px; }
-
-  /* News cards */
-  .news-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 14px 16px;
-    margin-bottom: 7px; cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    animation: fadeUp 0.35s ease both;
-  }
-  .news-card:hover { border-color: var(--border2); background: var(--bg3); }
-  .news-card.breaking { border-left: 3px solid var(--red); }
-  .news-card.expanded { border-color: var(--border2); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-  .card-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-  .card-badge {
-    font-size: 9px; font-family: var(--font-head); font-weight: 600;
-    letter-spacing: 0.08em; padding: 2px 6px; border-radius: 3px;
-    text-transform: uppercase;
-  }
-  .card-brand { font-size: 10px; font-family: var(--font-head); color: var(--text3); letter-spacing: 0.05em; }
-  .card-region { font-size: 10px; color: var(--text3); }
-  .breaking-label {
-    font-size: 9px; font-family: var(--font-head); letter-spacing: 0.1em;
-    color: var(--red); display: flex; align-items: center; gap: 4px;
-  }
-  .breaking-dot { width: 5px; height: 5px; background: var(--red); border-radius: 50%; animation: blink 1.2s ease infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  .card-headline {
-    font-size: 13px; font-family: var(--font-serif); color: var(--text);
-    line-height: 1.5; margin-bottom: 8px; font-weight: 400;
-  }
-
-  .card-bottom { display: flex; align-items: center; justify-content: space-between; }
-  .importance-dots { display: flex; gap: 3px; align-items: center; }
-  .imp-dot { width: 5px; height: 5px; border-radius: 50%; }
-  .card-time { font-size: 10px; color: var(--text3); font-family: var(--font-head); }
-  .sentiment-icon { font-size: 12px; }
-
-  .card-expand {
-    margin-top: 12px; padding-top: 12px;
-    border-top: 1px solid var(--border);
-    display: none;
-  }
-  .card-expand.open { display: block; }
-  .card-summary { font-size: 12px; color: var(--text2); line-height: 1.75; margin-bottom: 10px; }
-  .card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-  .card-tag {
-    font-size: 10px; color: var(--text3); font-family: var(--font-head);
-    padding: 2px 6px; border: 1px solid var(--border); border-radius: 3px;
-  }
-
-  /* Buttons */
-  button, .btn {
-    background: none; border: 1px solid var(--border2); border-radius: var(--radius);
-    color: var(--text2); cursor: pointer; font-family: var(--font-head);
-    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
-    padding: 7px 14px; transition: all 0.15s; display: inline-flex;
-    align-items: center; gap: 6px;
-  }
-  button:hover { border-color: var(--text3); color: var(--text); }
-  button:disabled { opacity: 0.4; cursor: default; }
-  .btn-accent { border-color: var(--accent2); color: var(--accent); }
-  .btn-accent:hover { background: #c8f06015; }
-
-  /* Refresh spin */
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
-
-  /* Empty / error */
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
-  .empty-icon { font-size: 36px; margin-bottom: 12px; }
-  .empty-label { font-size: 12px; font-family: var(--font-head); letter-spacing: 0.08em; }
-  #error-msg {
-    display: none; background: #1a0000; border: 1px solid #440000;
-    border-radius: var(--radius); padding: 12px 16px;
-    font-size: 12px; color: #ff8888; margin-bottom: 14px;
-    font-family: var(--font-head);
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    #main { grid-template-columns: 1fr; }
-    #sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-    #content { padding: 14px 16px; }
-    #topbar { padding: 0 16px; }
-  }
+  html { font-size:14px; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; overflow-x:hidden; }
+  ::-webkit-scrollbar{width:4px;height:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+  #app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+  #topbar{border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200;padding:0 24px;display:flex;align-items:stretch;justify-content:space-between;height:56px}
+  #topbar-left{display:flex;align-items:center;gap:20px}
+  #logo{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:-0.03em;color:var(--text);text-decoration:none}
+  #logo span{color:var(--accent)}
+  #topbar-right{display:flex;align-items:center;gap:12px}
+  #last-update{font-size:11px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.04em}
+  #main{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
+  #sidebar{border-right:1px solid var(--border);padding:20px 16px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column;gap:24px;background:var(--bg)}
+  .sst{font-size:9px;font-family:var(--font-head);letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-bottom:9px}
+  #stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px}
+  .stat-num{font-size:22px;font-family:var(--font-head);font-weight:700;line-height:1;margin-bottom:3px}
+  .stat-label{font-size:10px;color:var(--text3);letter-spacing:0.05em}
+  .nav-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:var(--radius);cursor:pointer;font-size:12px;font-family:var(--font-head);font-weight:500;color:var(--text2);transition:all 0.15s;border:1px solid transparent;user-select:none}
+  .nav-item:hover{background:var(--bg2);color:var(--text)}
+  .nav-item.active{background:var(--bg3);color:var(--accent);border-color:var(--border)}
+  .nav-icon{font-size:13px;margin-right:7px;opacity:0.7}
+  .nav-count{font-size:10px;color:var(--text3);font-weight:400}
+  .nav-item.active .nav-count{color:var(--accent2)}
+  #brand-tags{display:flex;flex-wrap:wrap;gap:5px}
+  .brand-tag{font-size:10px;font-family:var(--font-head);padding:3px 8px;border:1px solid var(--border);border-radius:3px;cursor:pointer;color:var(--text3);transition:all 0.15s;background:none}
+  .brand-tag:hover{color:var(--text);border-color:var(--border2)}
+  .brand-tag.active{color:var(--accent);border-color:var(--accent2);background:#c8f06010}
+  #keyword-list{display:flex;flex-direction:column;gap:5px}
+  .keyword-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-size:11px;color:var(--text2)}
+  .keyword-item button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+  .keyword-item button:hover{color:var(--red)}
+  #keyword-input-row{display:flex;gap:5px;margin-top:5px}
+  #keyword-input-row input{flex:1;min-width:0}
+  #source-list{display:flex;flex-direction:column;gap:5px}
+  .source-row{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:var(--radius);background:var(--bg2);border:1px solid var(--border);font-size:11px}
+  .source-dot{width:7px;height:7px;border-radius:50%;margin-right:7px;flex-shrink:0}
+  .source-label{color:var(--text2);display:flex;align-items:center}
+  .toggle{position:relative;width:28px;height:16px;cursor:pointer;flex-shrink:0}
+  .toggle input{opacity:0;width:0;height:0}
+  .toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:8px;transition:0.2s}
+  .toggle-slider::before{content:'';position:absolute;width:10px;height:10px;border-radius:50%;background:var(--text3);bottom:3px;left:3px;transition:0.2s}
+  .toggle input:checked+.toggle-slider{background:var(--accent2)}
+  .toggle input:checked+.toggle-slider::before{transform:translateX(12px);background:var(--bg)}
+  #importance-wrap{display:flex;align-items:center;gap:8px}
+  #importance-wrap input[type=range]{flex:1;accent-color:var(--accent)}
+  #importance-val{font-size:11px;color:var(--accent);font-family:var(--font-head);min-width:18px}
+  #content{padding:20px 24px;max-width:900px}
+  #briefing-card{background:linear-gradient(135deg,#141a0e 0%,#0f1a0a 100%);border:1px solid #2a3820;border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:20px;display:none}
+  #briefing-card.visible{display:block}
+  #briefing-date{font-size:10px;font-family:var(--font-head);color:var(--accent2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+  #briefing-title{font-size:13px;font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:8px}
+  #briefing-text{font-size:13px;color:#a8c880;line-height:1.75}
+  #search-bar{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+  #search-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:8px 14px;font-size:12px;font-family:var(--font-body);outline:none;transition:border 0.15s}
+  #search-input:focus{border-color:var(--border2)}
+  #search-input::placeholder{color:var(--text3)}
+  #result-count{font-size:10px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.06em;white-space:nowrap}
+  #progress-bar-wrap{margin-bottom:16px;display:none}
+  #progress-bar-bg{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+  #progress-bar-fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.6s ease;width:0%}
+  #progress-label{font-size:10px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.06em;margin-top:6px}
+  .news-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:7px;cursor:pointer;transition:border-color 0.15s,background 0.15s;animation:fadeUp 0.35s ease both}
+  .news-card:hover{border-color:var(--border2);background:var(--bg3)}
+  .news-card.breaking{border-left:3px solid var(--red)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .card-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .card-badge{font-size:9px;font-family:var(--font-head);font-weight:600;letter-spacing:0.08em;padding:2px 6px;border-radius:3px;text-transform:uppercase}
+  .card-brand{font-size:10px;font-family:var(--font-head);color:var(--text3);letter-spacing:0.05em}
+  .card-region{font-size:10px;color:var(--text3)}
+  .breaking-label{font-size:9px;font-family:var(--font-head);letter-spacing:0.1em;color:var(--red);display:flex;align-items:center;gap:4px}
+  .breaking-dot{width:5px;height:5px;background:var(--red);border-radius:50%;animation:blink 1.2s ease infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+  .card-headline{font-size:13px;font-family:var(--font-serif);color:var(--text);line-height:1.5;margin-bottom:8px;font-weight:400}
+  .card-bottom{display:flex;align-items:center;justify-content:space-between}
+  .importance-dots{display:flex;gap:3px;align-items:center}
+  .imp-dot{width:5px;height:5px;border-radius:50%}
+  .card-time{font-size:10px;color:var(--text3);font-family:var(--font-head)}
+  .card-expand{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none}
+  .card-expand.open{display:block}
+  .card-summary{font-size:12px;color:var(--text2);line-height:1.75;margin-bottom:10px}
+  .card-tags{display:flex;flex-wrap:wrap;gap:4px}
+  .card-tag{font-size:10px;color:var(--text3);font-family:var(--font-head);padding:2px 6px;border:1px solid var(--border);border-radius:3px}
+  button,.btn{background:none;border:1px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:0.06em;padding:7px 14px;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+  button:hover{border-color:var(--text3);color:var(--text)}
+  button:disabled{opacity:0.4;cursor:default}
+  .btn-accent{border-color:var(--accent2);color:var(--accent)}
+  .btn-accent:hover{background:#c8f06015}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spinning{animation:spin 0.8s linear infinite;display:inline-block}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+  .empty-icon{font-size:36px;margin-bottom:12px}
+  .empty-label{font-size:12px;font-family:var(--font-head);letter-spacing:0.08em}
+  #error-msg{display:none;background:#1a0000;border:1px solid #440000;border-radius:var(--radius);padding:14px 16px;font-size:12px;color:#ff8888;margin-bottom:14px;font-family:var(--font-head);line-height:1.6}
+  #source-status{font-size:10px;color:var(--text3);font-family:var(--font-head);margin-top:8px;line-height:1.7}
+  @media(max-width:768px){#main{grid-template-columns:1fr}#sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}#content{padding:14px 16px}#topbar{padding:0 16px}}
 </style>
 </head>
 <body>
 <div id="app">
-
-  <!-- Topbar -->
   <header id="topbar">
     <div id="topbar-left">
       <a id="logo" href="#">Signal<span>Feed</span></a>
-      <span id="last-update">—</span>
+      <span id="last-update"></span>
     </div>
     <div id="topbar-right">
       <button id="refresh-btn" onclick="sfFetch()">
@@ -287,15 +128,10 @@
       </button>
     </div>
   </header>
-
   <div id="main">
-
-    <!-- Sidebar -->
     <aside id="sidebar">
-
-      <!-- Stats -->
       <div>
-        <div class="sidebar-section-title">Today's signals</div>
+        <div class="sst">Today's signals</div>
         <div id="stats-grid">
           <div class="stat-card"><div class="stat-num" id="st-total" style="color:var(--text)">—</div><div class="stat-label">total</div></div>
           <div class="stat-card"><div class="stat-num" id="st-breaking" style="color:var(--red)">—</div><div class="stat-label">breaking</div></div>
@@ -303,486 +139,374 @@
           <div class="stat-card"><div class="stat-num" id="st-bullish" style="color:var(--green)">—</div><div class="stat-label">bullish</div></div>
         </div>
       </div>
-
-      <!-- Categories -->
       <div>
-        <div class="sidebar-section-title">Channels</div>
+        <div class="sst">Channels</div>
         <nav id="nav-channels">
-          <div class="nav-item active" data-cat="all" onclick="sfSetCat(this,'all')">
-            <span><span class="nav-icon">◈</span>All signals</span>
-            <span class="nav-count" id="nc-all">0</span>
-          </div>
-          <div class="nav-item" data-cat="china" onclick="sfSetCat(this,'china')">
-            <span><span class="nav-icon">⬡</span>China launches</span>
-            <span class="nav-count" id="nc-china">0</span>
-          </div>
-          <div class="nav-item" data-cat="ev" onclick="sfSetCat(this,'ev')">
-            <span><span class="nav-icon">⚡</span>EV & Tesla</span>
-            <span class="nav-count" id="nc-ev">0</span>
-          </div>
-          <div class="nav-item" data-cat="tech" onclick="sfSetCat(this,'tech')">
-            <span><span class="nav-icon">◎</span>Tech & AI</span>
-            <span class="nav-count" id="nc-tech">0</span>
-          </div>
-          <div class="nav-item" data-cat="press" onclick="sfSetCat(this,'press')">
-            <span><span class="nav-icon">◆</span>Press releases</span>
-            <span class="nav-count" id="nc-press">0</span>
-          </div>
-          <div class="nav-item" data-cat="social" onclick="sfSetCat(this,'social')">
-            <span><span class="nav-icon">⊕</span>Social & Reddit</span>
-            <span class="nav-count" id="nc-social">0</span>
-          </div>
+          <div class="nav-item active" data-cat="all" onclick="sfSetCat(this,'all')"><span><span class="nav-icon">◈</span>All signals</span><span class="nav-count" id="nc-all">0</span></div>
+          <div class="nav-item" data-cat="china" onclick="sfSetCat(this,'china')"><span><span class="nav-icon">⬡</span>China launches</span><span class="nav-count" id="nc-china">0</span></div>
+          <div class="nav-item" data-cat="ev" onclick="sfSetCat(this,'ev')"><span><span class="nav-icon">⚡</span>EV & Tesla</span><span class="nav-count" id="nc-ev">0</span></div>
+          <div class="nav-item" data-cat="tech" onclick="sfSetCat(this,'tech')"><span><span class="nav-icon">◎</span>Tech & AI</span><span class="nav-count" id="nc-tech">0</span></div>
+          <div class="nav-item" data-cat="press" onclick="sfSetCat(this,'press')"><span><span class="nav-icon">◆</span>Press releases</span><span class="nav-count" id="nc-press">0</span></div>
+          <div class="nav-item" data-cat="social" onclick="sfSetCat(this,'social')"><span><span class="nav-icon">⊕</span>Social & Reddit</span><span class="nav-count" id="nc-social">0</span></div>
         </nav>
       </div>
-
-      <!-- Brand watchlist -->
       <div>
-        <div class="sidebar-section-title">Brand watchlist</div>
+        <div class="sst">Brand watchlist</div>
         <div id="brand-tags"></div>
       </div>
-
-      <!-- Custom keywords -->
       <div>
-        <div class="sidebar-section-title">Keyword alerts</div>
+        <div class="sst">Keyword alerts</div>
         <div id="keyword-list"></div>
         <div id="keyword-input-row">
-          <input id="kw-input" type="text" placeholder="e.g. solid state..." onkeydown="if(event.key==='Enter')sfAddKeyword()" />
-          <button onclick="sfAddKeyword()" class="btn-accent">+ Add</button>
+          <input id="kw-input" type="text" placeholder="e.g. solid state…" onkeydown="if(event.key==='Enter')sfAddKeyword()" style="flex:1;min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:6px 10px;font-size:11px;font-family:var(--font-body);outline:none"/>
+          <button onclick="sfAddKeyword()" class="btn-accent" style="flex-shrink:0;font-size:11px;padding:5px 10px">+ Add</button>
         </div>
       </div>
-
-      <!-- Sources -->
       <div>
-        <div class="sidebar-section-title">Active sources</div>
+        <div class="sst">Active sources</div>
         <div id="source-list"></div>
+        <div id="source-status"></div>
       </div>
-
-      <!-- Importance filter -->
       <div>
-        <div class="sidebar-section-title">Min. importance</div>
+        <div class="sst">Min. importance</div>
         <div id="importance-wrap">
-          <span style="font-size:10px;color:var(--text3);">1</span>
-          <input type="range" min="1" max="5" value="1" id="importance-range" oninput="sfOnImportance(this.value)" step="1" />
-          <span style="font-size:10px;color:var(--text3);">5</span>
+          <span style="font-size:10px;color:var(--text3)">1</span>
+          <input type="range" min="1" max="5" value="1" id="importance-range" oninput="sfOnImportance(this.value)" step="1"/>
+          <span style="font-size:10px;color:var(--text3)">5</span>
           <span id="importance-val">1+</span>
         </div>
       </div>
-
     </aside>
-
-    <!-- Main content -->
     <main id="content">
-
-      <!-- Daily briefing -->
       <div id="briefing-card">
-        <div id="briefing-header">
-          <div style="width:6px;height:6px;background:var(--accent);border-radius:50%;"></div>
-          <div id="briefing-date"></div>
-        </div>
+        <div id="briefing-date"></div>
         <div id="briefing-title">Morning Briefing</div>
         <div id="briefing-text"></div>
       </div>
-
-      <!-- Progress -->
       <div id="progress-bar-wrap">
         <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
         <div id="progress-label"></div>
       </div>
-
-      <!-- Error -->
       <div id="error-msg"></div>
-
-      <!-- Search -->
       <div id="search-bar">
-        <input id="search-input" type="text" placeholder="Search headlines, brands, tags…" oninput="sfRender()" />
+        <input id="search-input" type="text" placeholder="Search headlines, brands, tags…" oninput="sfRender()"/>
         <span id="result-count">— signals</span>
       </div>
-
-      <!-- Feed -->
       <div id="feed"></div>
-
     </main>
   </div>
 </div>
-
 <script>
-// ─── State ───────────────────────────────────────────────────────────────────
-let SF = {
-  news: [],
-  cat: 'all',
-  brandFilter: '',
-  minImportance: 1,
-  keywords: [],
+// ── State ──────────────────────────────────────────────────────────────────────
+var SF = {
+  news: [], cat: 'all', brandFilter: '', minImportance: 1, keywords: [],
   sources: {
-    google_en: { label: 'Google News (EN)', color: '#EA4335', enabled: true },
-    google_cn: { label: 'Google News (CN)', color: '#e6162d', enabled: true },
-    reddit:    { label: 'Reddit',           color: '#FF6314', enabled: true },
-    electrek:  { label: 'Electrek RSS',     color: '#44cc88', enabled: true },
-    cnevpost:  { label: 'CnEVPost RSS',     color: '#4488ff', enabled: true },
-    press:     { label: 'Brand Newsrooms',  color: '#888',    enabled: true },
+    google_en: { label:'Google News EN', color:'#EA4335', enabled:true },
+    google_cn: { label:'Google News CN', color:'#e6162d', enabled:true },
+    reddit:    { label:'Reddit',          color:'#FF6314', enabled:true },
+    electrek:  { label:'Electrek',        color:'#44cc88', enabled:true },
+    cnevpost:  { label:'CnEVPost',        color:'#4488ff', enabled:true },
   }
 };
+var BRANDS = ['BYD','NIO','Xpeng','Li Auto','Tesla','Zeekr','Huawei','BMW','Mercedes','Volkswagen','Toyota','Xiaomi Auto','Rivian','Lucid'];
 
-const BRANDS = ['BYD','NIO','Xpeng','Li Auto','Tesla','Zeekr','Huawei','BMW','Mercedes','Volkswagen','Toyota','Xiaomi Auto','Rivian','Lucid'];
-const CORS   = 'https://api.allorigins.win/get?url=';
+// ── CORS proxies — tried in order until one works ──────────────────────────────
+var PROXIES = [
+  function(u){ return 'https://api.allorigins.win/get?url=' + encodeURIComponent(u); },
+  function(u){ return 'https://corsproxy.io/?' + encodeURIComponent(u); },
+  function(u){ return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); },
+];
 
-// ─── Persistence ─────────────────────────────────────────────────────────────
-function sfSave() {
-  try {
-    localStorage.setItem('sf_prefs', JSON.stringify({
-      cat: SF.cat,
-      brandFilter: SF.brandFilter,
-      minImportance: SF.minImportance,
-      keywords: SF.keywords,
-      sources: Object.fromEntries(Object.entries(SF.sources).map(([k,v])=>[k,v.enabled]))
-    }));
-  } catch(e) {}
+async function fetchViaProxy(url) {
+  for (var i = 0; i < PROXIES.length; i++) {
+    try {
+      var proxyUrl = PROXIES[i](url);
+      var res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) continue;
+      var json = await res.json();
+      // allorigins wraps in .contents, codetabs returns raw text, corsproxy returns raw text
+      var text = json.contents !== undefined ? json.contents : (typeof json === 'string' ? json : JSON.stringify(json));
+      if (text && text.length > 100) return text;
+    } catch(e) { /* try next */ }
+  }
+  return null;
 }
 
+// ── RSS parser ─────────────────────────────────────────────────────────────────
+function parseRSS(xml, srcKey) {
+  try {
+    var doc = new DOMParser().parseFromString(xml, 'text/xml');
+    return Array.from(doc.querySelectorAll('item')).slice(0,8).map(function(it){
+      return {
+        title:   it.querySelector('title')?.textContent || '',
+        desc:    (it.querySelector('description')?.textContent||'').replace(/<[^>]+>/g,'').slice(0,300),
+        pubDate: it.querySelector('pubDate')?.textContent || '',
+        source:  it.querySelector('source')?.textContent || srcKey,
+        _src:    srcKey
+      };
+    });
+  } catch(e) { return []; }
+}
+
+// ── Persistence ────────────────────────────────────────────────────────────────
+function sfSave() {
+  try { localStorage.setItem('sf_prefs', JSON.stringify({ cat:SF.cat, brandFilter:SF.brandFilter, minImportance:SF.minImportance, keywords:SF.keywords, sources:Object.fromEntries(Object.entries(SF.sources).map(function(e){ return [e[0],e[1].enabled]; })) })); } catch(e){}
+}
 function sfLoad() {
   try {
-    const p = JSON.parse(localStorage.getItem('sf_prefs') || '{}');
-    if (p.cat)          SF.cat = p.cat;
-    if (p.brandFilter)  SF.brandFilter = p.brandFilter;
+    var p = JSON.parse(localStorage.getItem('sf_prefs')||'{}');
+    if (p.cat) SF.cat = p.cat;
+    if (p.brandFilter) SF.brandFilter = p.brandFilter;
     if (p.minImportance) SF.minImportance = p.minImportance;
-    if (p.keywords)     SF.keywords = p.keywords;
-    if (p.sources) Object.entries(p.sources).forEach(([k,v])=> { if(SF.sources[k]) SF.sources[k].enabled = v; });
-  } catch(e) {}
+    if (p.keywords) SF.keywords = p.keywords;
+    if (p.sources) Object.entries(p.sources).forEach(function(e){ if(SF.sources[e[0]]) SF.sources[e[0]].enabled = e[1]; });
+  } catch(e){}
 }
 
-// ─── UI builders ─────────────────────────────────────────────────────────────
+// ── UI builders ────────────────────────────────────────────────────────────────
 function sfBuildBrands() {
-  const el = document.getElementById('brand-tags');
-  el.innerHTML = BRANDS.map(b =>
-    `<span class="brand-tag${SF.brandFilter===b?' active':''}" data-b="${b}" onclick="sfToggleBrand('${b}')">${b}</span>`
-  ).join('');
-}
-
-function sfBuildSources() {
-  const el = document.getElementById('source-list');
-  el.innerHTML = Object.entries(SF.sources).map(([k,s]) => `
-    <div class="source-row">
-      <span class="source-label">
-        <span class="source-dot" style="background:${s.color}"></span>${s.label}
-      </span>
-      <label class="toggle" aria-label="Toggle ${s.label}">
-        <input type="checkbox" ${s.enabled?'checked':''} onchange="sfToggleSource('${k}',this.checked)" />
-        <span class="toggle-slider"></span>
-      </label>
-    </div>`).join('');
-}
-
-function sfBuildKeywords() {
-  const el = document.getElementById('keyword-list');
-  el.innerHTML = SF.keywords.length ? SF.keywords.map((kw,i) => `
-    <div class="keyword-item">
-      <span style="color:var(--accent)">⬡</span>&nbsp;${kw}
-      <button onclick="sfRemoveKeyword(${i})" aria-label="Remove keyword">×</button>
-    </div>`).join('') : '<div style="font-size:11px;color:var(--text3);padding:4px 0;">No keywords yet</div>';
-}
-
-function sfBadgeStyle(source) {
-  const colors = {
-    weibo:'#e6162d', xiaohongshu:'#ff2442', x:'#888',
-    press:'#4488ff', web:'#44cc88', reddit:'#FF6314',
-    hn:'#FF6600', google:'#EA4335', electrek:'#44cc88',
-    cnevpost:'#4488ff'
-  };
-  const c = colors[source] || '#888';
-  return `background:${c}20;color:${c};border:1px solid ${c}40;`;
-}
-
-function sfDots(n) {
-  return [1,2,3,4,5].map(i => {
-    const c = i<=n ? (n>=4?'var(--red)':n>=3?'var(--orange)':'var(--green)') : 'var(--border2)';
-    return `<span class="imp-dot" style="background:${c}"></span>`;
+  document.getElementById('brand-tags').innerHTML = BRANDS.map(function(b){
+    return '<span class="brand-tag'+(SF.brandFilter===b?' active':'')+'" onclick="sfToggleBrand(\''+b+'\')">'+b+'</span>';
   }).join('');
 }
-
+function sfBuildSources() {
+  document.getElementById('source-list').innerHTML = Object.entries(SF.sources).map(function(e){
+    var k=e[0], s=e[1];
+    return '<div class="source-row"><span class="source-label"><span class="source-dot" style="background:'+s.color+'"></span>'+s.label+'</span><label class="toggle"><input type="checkbox" '+(s.enabled?'checked':'')+' onchange="sfToggleSource(\''+k+'\',this.checked)"/><span class="toggle-slider"></span></label></div>';
+  }).join('');
+}
+function sfBuildKeywords() {
+  document.getElementById('keyword-list').innerHTML = SF.keywords.length
+    ? SF.keywords.map(function(kw,i){ return '<div class="keyword-item"><span style="color:var(--accent)">⬡</span>&nbsp;'+kw+'<button onclick="sfRemoveKeyword('+i+')" aria-label="Remove">×</button></div>'; }).join('')
+    : '<div style="font-size:11px;color:var(--text3);padding:4px 0">No keywords yet</div>';
+}
+function sfBadgeStyle(src) {
+  var c = {google:'#EA4335',google_en:'#EA4335',google_cn:'#e6162d',reddit:'#FF6314',electrek:'#44cc88',cnevpost:'#4488ff',press:'#4488ff',web:'#44cc88'}[src]||'#888';
+  return 'background:'+c+'20;color:'+c+';border:1px solid '+c+'40;';
+}
+function sfDots(n) {
+  return [1,2,3,4,5].map(function(i){ var c=i<=n?(n>=4?'var(--red)':n>=3?'var(--orange)':'var(--green)'):'var(--border2)'; return '<span class="imp-dot" style="background:'+c+'"></span>'; }).join('');
+}
 function sfSentiment(s) {
-  if (s==='bullish') return `<span class="sentiment-icon" style="color:var(--green)" title="Bullish">↑</span>`;
-  if (s==='bearish') return `<span class="sentiment-icon" style="color:var(--red)" title="Bearish">↓</span>`;
-  return `<span class="sentiment-icon" style="color:var(--text3)" title="Neutral">—</span>`;
+  if(s==='bullish') return '<span style="color:var(--green);font-size:12px" title="Bullish">↑</span>';
+  if(s==='bearish') return '<span style="color:var(--red);font-size:12px" title="Bearish">↓</span>';
+  return '<span style="color:var(--text3);font-size:12px">—</span>';
 }
 
-// ─── Filters ─────────────────────────────────────────────────────────────────
-function sfSetCat(el, cat) {
-  SF.cat = cat;
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el.classList.add('active');
-  sfSave(); sfRender();
-}
-function sfToggleBrand(b) {
-  SF.brandFilter = SF.brandFilter===b?'':b;
-  sfBuildBrands(); sfSave(); sfRender();
-}
-function sfToggleSource(k, v) {
-  SF.sources[k].enabled = v; sfSave();
-}
-function sfOnImportance(v) {
-  SF.minImportance = parseInt(v);
-  document.getElementById('importance-val').textContent = v + '+';
-  sfSave(); sfRender();
-}
-function sfAddKeyword() {
-  const inp = document.getElementById('kw-input');
-  const kw = inp.value.trim();
-  if (kw && !SF.keywords.includes(kw)) { SF.keywords.push(kw); sfBuildKeywords(); sfSave(); sfRender(); }
-  inp.value = '';
-}
-function sfRemoveKeyword(i) {
-  SF.keywords.splice(i,1); sfBuildKeywords(); sfSave(); sfRender();
-}
+// ── Filters ────────────────────────────────────────────────────────────────────
+function sfSetCat(el,cat){ SF.cat=cat; document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');}); el.classList.add('active'); sfSave(); sfRender(); }
+function sfToggleBrand(b){ SF.brandFilter=SF.brandFilter===b?'':b; sfBuildBrands(); sfSave(); sfRender(); }
+function sfToggleSource(k,v){ SF.sources[k].enabled=v; sfSave(); }
+function sfOnImportance(v){ SF.minImportance=parseInt(v); document.getElementById('importance-val').textContent=v+'+'; sfSave(); sfRender(); }
+function sfAddKeyword(){ var inp=document.getElementById('kw-input'); var kw=inp.value.trim(); if(kw&&!SF.keywords.includes(kw)){SF.keywords.push(kw);sfBuildKeywords();sfSave();sfRender();} inp.value=''; }
+function sfRemoveKeyword(i){ SF.keywords.splice(i,1); sfBuildKeywords(); sfSave(); sfRender(); }
 
-// ─── Render ───────────────────────────────────────────────────────────────────
+// ── Render ─────────────────────────────────────────────────────────────────────
 function sfRender() {
-  const q = (document.getElementById('search-input')?.value||'').toLowerCase();
-  const filtered = SF.news.filter(item => {
-    if (SF.cat !== 'all' && item.category !== SF.cat) return false;
-    if (SF.brandFilter && !(item.brand||'').toLowerCase().includes(SF.brandFilter.toLowerCase()) && !(item.headline||'').toLowerCase().includes(SF.brandFilter.toLowerCase())) return false;
-    if ((item.importance||1) < SF.minImportance) return false;
-    if (q && !(item.headline||'').toLowerCase().includes(q) && !(item.brand||'').toLowerCase().includes(q) && !(item.summary||'').toLowerCase().includes(q) && !(item.tags||[]).some(t=>t.toLowerCase().includes(q))) return false;
-    // keyword highlights — always show, but mark
+  var q = (document.getElementById('search-input')?.value||'').toLowerCase();
+  var filtered = SF.news.filter(function(item){
+    if(SF.cat!=='all' && item.category!==SF.cat) return false;
+    if(SF.brandFilter && !(item.brand||'').toLowerCase().includes(SF.brandFilter.toLowerCase()) && !(item.headline||'').toLowerCase().includes(SF.brandFilter.toLowerCase())) return false;
+    if((item.importance||1)<SF.minImportance) return false;
+    if(q && !(item.headline||'').toLowerCase().includes(q) && !(item.brand||'').toLowerCase().includes(q) && !(item.summary||'').toLowerCase().includes(q) && !(item.tags||[]).some(function(t){return t.toLowerCase().includes(q);})) return false;
     return true;
-  }).sort((a,b)=>(b.importance||0)-(a.importance||0));
+  }).sort(function(a,b){return (b.importance||0)-(a.importance||0);});
 
-  // Update counts
   document.getElementById('st-total').textContent    = SF.news.length;
-  document.getElementById('st-breaking').textContent = SF.news.filter(i=>i.importance>=4).length;
-  document.getElementById('st-china').textContent    = SF.news.filter(i=>i.region==='China').length;
-  document.getElementById('st-bullish').textContent  = SF.news.filter(i=>i.sentiment==='bullish').length;
-  ['all','china','ev','tech','press','social'].forEach(c => {
-    const el = document.getElementById('nc-'+c);
-    if (el) el.textContent = c==='all' ? SF.news.length : SF.news.filter(i=>i.category===c).length;
+  document.getElementById('st-breaking').textContent = SF.news.filter(function(i){return i.importance>=4;}).length;
+  document.getElementById('st-china').textContent    = SF.news.filter(function(i){return i.region==='China';}).length;
+  document.getElementById('st-bullish').textContent  = SF.news.filter(function(i){return i.sentiment==='bullish';}).length;
+  ['all','china','ev','tech','press','social'].forEach(function(c){
+    var el=document.getElementById('nc-'+c);
+    if(el) el.textContent = c==='all'?SF.news.length:SF.news.filter(function(i){return i.category===c;}).length;
   });
+  document.getElementById('result-count').textContent = filtered.length+' signal'+(filtered.length!==1?'s':'');
 
-  document.getElementById('result-count').textContent = `${filtered.length} signal${filtered.length!==1?'s':''}`;
-
-  const feed = document.getElementById('feed');
-  if (!filtered.length) {
-    feed.innerHTML = `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-label">${SF.news.length?'No signals match this filter':'Hit Refresh to load today\'s intelligence'}</div></div>`;
+  var feed = document.getElementById('feed');
+  if(!filtered.length){
+    feed.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-label">'+(SF.news.length?'No signals match this filter':'Hit Refresh to load today\'s intelligence')+'</div></div>';
     return;
   }
-
-  feed.innerHTML = filtered.map((item, idx) => {
-    const breaking = item.importance >= 4;
-    const t = item.timestamp ? new Date(item.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
-    const hasKw = SF.keywords.some(kw => (item.headline||'').toLowerCase().includes(kw.toLowerCase()) || (item.summary||'').toLowerCase().includes(kw.toLowerCase()));
-    const tags = (item.tags||[]).slice(0,5).map(t=>`<span class="card-tag">#${t}</span>`).join('');
-    return `<div class="news-card${breaking?' breaking':''}${hasKw?' kw-match':''}" style="animation-delay:${Math.min(idx*0.04,0.5)}s${hasKw?';border-color:#c8f06040':''}" onclick="sfExpandCard(this)">
-      <div class="card-top">
-        <div class="card-meta">
-          <span class="card-badge" style="${sfBadgeStyle(item.source)}">${item.sourceLabel||item.source||'web'}</span>
-          ${item.brand?`<span class="card-brand">${item.brand}</span>`:''}
-          ${breaking?`<span class="breaking-label"><span class="breaking-dot"></span>BREAKING</span>`:''}
-          ${hasKw?`<span class="card-badge" style="background:#c8f06020;color:var(--accent);border-color:var(--accent2)40;">⬡ keyword</span>`:''}
-        </div>
-        <span class="card-region">${item.region||''}</span>
-      </div>
-      <div class="card-headline">${item.headline||''}</div>
-      <div class="card-bottom">
-        <div class="importance-dots">${sfDots(item.importance||2)}</div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          ${sfSentiment(item.sentiment)}
-          <span class="card-time">${t}</span>
-        </div>
-      </div>
-      <div class="card-expand">
-        <p class="card-summary">${item.summary||''}</p>
-        <div class="card-tags">${tags}</div>
-      </div>
-    </div>`;
+  feed.innerHTML = filtered.map(function(item,idx){
+    var breaking=item.importance>=4;
+    var t=item.timestamp?new Date(item.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
+    var hasKw=SF.keywords.some(function(kw){return (item.headline||'').toLowerCase().includes(kw.toLowerCase())||(item.summary||'').toLowerCase().includes(kw.toLowerCase());});
+    var tags=(item.tags||[]).slice(0,5).map(function(t){return '<span class="card-tag">#'+t+'</span>';}).join('');
+    return '<div class="news-card'+(breaking?' breaking':'')+'" style="animation-delay:'+Math.min(idx*0.04,0.5)+'s'+(hasKw?';border-color:#c8f06040':'')+'" onclick="sfExpand(this)">'
+      +'<div class="card-top"><div class="card-meta">'
+      +'<span class="card-badge" style="'+sfBadgeStyle(item.source)+'">'+(item.sourceLabel||item.source||'web')+'</span>'
+      +(item.brand?'<span class="card-brand">'+item.brand+'</span>':'')
+      +(breaking?'<span class="breaking-label"><span class="breaking-dot"></span>BREAKING</span>':'')
+      +(hasKw?'<span class="card-badge" style="background:#c8f06020;color:var(--accent);border-color:#8ab84040">⬡ keyword</span>':'')
+      +'</div><span class="card-region">'+(item.region||'')+'</span></div>'
+      +'<div class="card-headline">'+(item.headline||'')+'</div>'
+      +'<div class="card-bottom"><div class="importance-dots">'+sfDots(item.importance||2)+'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px">'+sfSentiment(item.sentiment)+'<span class="card-time">'+t+'</span></div></div>'
+      +'<div class="card-expand"><p class="card-summary">'+(item.summary||'')+'</p><div class="card-tags">'+tags+'</div></div>'
+      +'</div>';
   }).join('');
 }
+function sfExpand(el){ el.querySelector('.card-expand').classList.toggle('open'); el.classList.toggle('expanded'); }
 
-function sfExpandCard(el) {
-  const exp = el.querySelector('.card-expand');
-  exp.classList.toggle('open');
-  el.classList.toggle('expanded');
-}
-
-// ─── Progress ─────────────────────────────────────────────────────────────────
+// ── Progress ───────────────────────────────────────────────────────────────────
 function sfProgress(pct, label) {
-  document.getElementById('progress-bar-fill').style.width = pct + '%';
+  document.getElementById('progress-bar-fill').style.width = pct+'%';
   document.getElementById('progress-label').textContent = label;
 }
 
-// ─── RSS Fetching ─────────────────────────────────────────────────────────────
-async function sfFetchRSS(url) {
-  const res = await fetch(CORS + encodeURIComponent(url));
-  const json = await res.json();
-  const doc = new DOMParser().parseFromString(json.contents, 'text/xml');
-  return Array.from(doc.querySelectorAll('item')).slice(0,8).map(it => ({
-    title:   it.querySelector('title')?.textContent || '',
-    desc:    (it.querySelector('description')?.textContent||'').replace(/<[^>]+>/g,'').slice(0,250),
-    pubDate: it.querySelector('pubDate')?.textContent || '',
-    source:  it.querySelector('source')?.textContent || '',
-    link:    it.querySelector('link')?.textContent || '',
-  }));
-}
-
+// ── Feed gathering ─────────────────────────────────────────────────────────────
 async function sfGatherFeeds() {
-  const raw = [];
-  const tasks = [];
+  var raw = [];
+  var ok  = [];
+  var fail= [];
+  var tasks = [];
+
+  function addTask(label, url, srcKey) {
+    tasks.push(
+      fetchViaProxy(url).then(function(text){
+        if (!text) { fail.push(label); return; }
+        var items = parseRSS(text, srcKey);
+        items.forEach(function(i){ raw.push(i); });
+        if (items.length) ok.push(label+' ('+items.length+')');
+        else fail.push(label+' (empty)');
+      }).catch(function(){ fail.push(label); })
+    );
+  }
 
   if (SF.sources.google_en.enabled) {
-    const queries = [
-      'BYD NIO Xpeng Li Auto Zeekr electric car launch 2026',
-      'Tesla new model FSD autonomous 2026',
-      'autonomous driving AI automotive technology 2026',
-      'BMW Mercedes Volkswagen Toyota new car announcement 2026',
-      'electric vehicle EV battery breakthrough 2026',
-    ];
-    queries.forEach(q => {
-      const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en&gl=US&ceid=US:en`;
-      tasks.push(sfFetchRSS(url).then(items => items.forEach(i => raw.push({...i, _src:'google_en'}))).catch(()=>{}));
+    [
+      ['China EV EN', 'BYD NIO Xpeng Li Auto Zeekr electric car 2026'],
+      ['Tesla EN',    'Tesla new model FSD 2026'],
+      ['Auto Tech EN','autonomous driving AI automotive 2026'],
+      ['Brand Press', 'BMW Mercedes Volkswagen Toyota new car 2026'],
+      ['EV Industry', 'electric vehicle battery launch 2026'],
+    ].forEach(function(q){
+      addTask(q[0], 'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=en&gl=US&ceid=US:en', 'google_en');
     });
   }
 
   if (SF.sources.google_cn.enabled) {
-    const queries = [
-      '比亚迪 蔚来 小鹏 新能源汽车 新车发布',
-      '华为 问界 小米汽车 极氪 发布',
-      '中国电动车 自动驾驶',
-    ];
-    queries.forEach(q => {
-      const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=zh-CN&gl=CN&ceid=CN:zh-Hans`;
-      tasks.push(sfFetchRSS(url).then(items => items.forEach(i => raw.push({...i, _src:'google_cn'}))).catch(()=>{}));
+    [
+      ['China EV CN',   '比亚迪 蔚来 小鹏 新能源汽车 新车'],
+      ['China Auto CN', '华为 问界 小米汽车 极氪 发布 2026'],
+    ].forEach(function(q){
+      addTask(q[0], 'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=zh-CN&gl=CN&ceid=CN:zh-Hans', 'google_cn');
     });
   }
 
   if (SF.sources.reddit.enabled) {
-    const subs = ['electricvehicles','teslamotors','cars','chinaEV'];
-    subs.forEach(sub => {
-      const url = `https://www.reddit.com/r/${sub}/hot.json?limit=8`;
+    ['electricvehicles','teslamotors','chinaEV','cars'].forEach(function(sub){
       tasks.push(
-        fetch(CORS + encodeURIComponent(url))
-          .then(r=>r.json())
-          .then(json => {
-            const posts = JSON.parse(json.contents)?.data?.children || [];
-            posts.forEach(p => raw.push({
-              title: p.data.title, desc: p.data.selftext?.slice(0,200)||'',
-              pubDate: new Date(p.data.created_utc*1000).toUTCString(),
-              source: 'r/'+sub, link: 'https://reddit.com'+p.data.permalink, _src:'reddit'
-            }));
-          }).catch(()=>{})
+        fetchViaProxy('https://www.reddit.com/r/'+sub+'/hot.json?limit=8').then(function(text){
+          if (!text) { fail.push('r/'+sub); return; }
+          try {
+            var data = JSON.parse(text);
+            var posts = data.data?.children || [];
+            posts.forEach(function(p){
+              raw.push({ title:p.data.title, desc:(p.data.selftext||'').slice(0,250), pubDate:new Date(p.data.created_utc*1000).toUTCString(), source:'r/'+sub, _src:'reddit' });
+            });
+            ok.push('r/'+sub+' ('+posts.length+')');
+          } catch(e){ fail.push('r/'+sub); }
+        }).catch(function(){ fail.push('r/'+sub); })
       );
     });
   }
 
-  if (SF.sources.electrek.enabled) {
-    tasks.push(sfFetchRSS('https://electrek.co/feed/').then(items => items.forEach(i=>raw.push({...i,_src:'electrek'}))).catch(()=>{}));
-  }
-
-  if (SF.sources.cnevpost.enabled) {
-    tasks.push(sfFetchRSS('https://cnevpost.com/feed/').then(items => items.forEach(i=>raw.push({...i,_src:'cnevpost'}))).catch(()=>{}));
-  }
-
-  if (SF.sources.press.enabled) {
-    const feeds = [
-      'https://www.bmwgroup.com/en/news.rss',
-      'https://media.mercedes-benz.com/rss',
-    ];
-    feeds.forEach(url => tasks.push(sfFetchRSS(url).then(items=>items.forEach(i=>raw.push({...i,_src:'press'}))).catch(()=>{})));
-  }
+  if (SF.sources.electrek.enabled)  addTask('Electrek', 'https://electrek.co/feed/', 'electrek');
+  if (SF.sources.cnevpost.enabled)   addTask('CnEVPost', 'https://cnevpost.com/feed/', 'cnevpost');
 
   await Promise.allSettled(tasks);
+
+  // Show source status
+  var statusEl = document.getElementById('source-status');
+  statusEl.innerHTML =
+    (ok.length   ? '<span style="color:var(--green)">✓ '+ok.join(', ')+'</span><br>' : '') +
+    (fail.length  ? '<span style="color:var(--text3)">✗ '+fail.join(', ')+'</span>' : '');
+
   return raw;
 }
 
-// ─── Claude analysis ──────────────────────────────────────────────────────────
-const SF_SYS = `You are an automotive and tech intelligence analyst. Given raw RSS/news items, curate, deduplicate and score them. Return ONLY a valid JSON object with two keys:
-1. "briefing": a 2-3 sentence morning briefing summary of the most important themes today (plain text, no markdown)
-2. "items": array of 12-20 curated news items
+// ── Claude analysis ────────────────────────────────────────────────────────────
+var SF_SYS = 'You are an automotive and tech intelligence analyst. Given raw RSS/news items, curate, deduplicate and score them. Return ONLY a valid JSON object with two keys:\n1. "briefing": a 2-3 sentence morning summary of the most important themes today (plain text)\n2. "items": array of 12-20 curated news items\n\nEach item: { id, headline (≤12 words punchy), summary (2-3 sentences with specific facts), brand (or null), category ("china"|"ev"|"tech"|"press"|"social"), source (short key), sourceLabel (readable label), sentiment ("bullish"|"neutral"|"bearish"), importance (1-5), region ("China"|"Global"|"US"|"Europe"), timestamp (ISO today), tags (3-5 strings) }\n\nPrioritise: China EV launches, Tesla, AI/autonomous driving, major brand news. If feeds are thin, add 2-3 high-signal items from your own knowledge. Return ONLY the JSON, no markdown fences.';
 
-Each item must have: { id (unique string), headline (≤12 words, punchy, present tense), summary (2-3 sentences with specific facts, model names, specs, prices where available), brand (primary brand or null), category ("china"|"ev"|"tech"|"press"|"social"), source (short key: "google"|"reddit"|"electrek"|"cnevpost"|"press"|"web"), sourceLabel (human readable), sentiment ("bullish"|"neutral"|"bearish"), importance (1-5, 5=major breaking news), region ("China"|"Global"|"US"|"Europe"), timestamp (ISO string for today), tags (3-5 relevant lowercase strings) }
-
-Prioritise: China EV launches, Tesla, AI/autonomous driving, major brand announcements. Add 2-3 high-signal items from your own knowledge if the feeds are thin. Return ONLY the JSON object, no markdown fences, no explanation.`;
-
-// ─── Main fetch ───────────────────────────────────────────────────────────────
+// ── Main fetch ─────────────────────────────────────────────────────────────────
 async function sfFetch() {
-  const btn = document.getElementById('refresh-btn');
-  const icon = document.getElementById('refresh-icon');
-  const lbl  = document.getElementById('refresh-label');
+  var btn  = document.getElementById('refresh-btn');
+  var icon = document.getElementById('refresh-icon');
+  var lbl  = document.getElementById('refresh-label');
   btn.disabled = true;
-  icon.textContent = '↺'; icon.className = 'spinning';
-  lbl.textContent = 'Scanning…';
+  icon.className = 'spinning'; lbl.textContent = 'Scanning…';
   document.getElementById('progress-bar-wrap').style.display = 'block';
   document.getElementById('error-msg').style.display = 'none';
   document.getElementById('briefing-card').classList.remove('visible');
+  document.getElementById('source-status').textContent = '';
 
-  sfProgress(8, 'Connecting to news feeds…');
+  sfProgress(5, 'Connecting to news sources…');
 
-  let raw = [];
+  var raw = [];
+  try { raw = await sfGatherFeeds(); } catch(e){ console.warn(e); }
+
+  sfProgress(62, 'Gathered '+raw.length+' items — asking Claude to curate…');
+
+  var today = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var kwNote = SF.keywords.length ? '\nFlag items matching keywords: '+SF.keywords.join(', ') : '';
+
+  // Even if 0 items from feeds, Claude will use its own knowledge
+  var userPrompt = 'Today is '+today+'.'+kwNote+'\n\n'
+    + (raw.length
+        ? 'Here are '+raw.length+' raw items from news feeds. Curate, score and return as JSON:\n\n'
+          + raw.slice(0,70).map(function(r,i){ return '['+(i+1)+'] SOURCE:'+r._src+' | '+r.source+'\nTITLE: '+r.title+'\nDESC: '+r.desc+'\nDATE: '+r.pubDate; }).join('\n---\n')
+        : 'The RSS feeds returned no items (proxy issue). Please generate today\'s automotive intelligence briefing entirely from your own knowledge — focus on the most recent China EV launches, Tesla news, autonomous driving, and major brand announcements.');
+
   try {
-    raw = await sfGatherFeeds();
-  } catch(e) { console.warn('Feed gather error', e); }
-
-  sfProgress(60, `Gathered ${raw.length} raw items — asking Claude to curate…`);
-
-  const today = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const kwNote = SF.keywords.length ? `\nUser keyword alerts to flag: ${SF.keywords.join(', ')}` : '';
-
-  const userPrompt = `Today is ${today}.${kwNote}
-Here are ${raw.length} raw items from auto/tech/EV/China news feeds. Curate, score and return as JSON:\n\n${
-  raw.slice(0,60).map((r,i)=>`[${i+1}] SOURCE:${r._src} | OUTLET:${r.source}\nTITLE: ${r.title}\nDESC: ${r.desc}\nDATE: ${r.pubDate}`).join('\n---\n')
-}`;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 5000,
-        system: SF_SYS,
-        messages: [{ role:'user', content: userPrompt }]
-      })
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:5000, system:SF_SYS, messages:[{role:'user',content:userPrompt}] })
     });
-    sfProgress(90, 'Rendering intelligence…');
-    const data = await resp.json();
+    sfProgress(90, 'Rendering signals…');
+    var data = await resp.json();
     if (data.error) throw new Error(data.error.message);
-    const text = (data.content||[]).map(c=>c.type==='text'?c.text:'').join('\n');
-    const clean = text.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
+    var text = (data.content||[]).map(function(c){return c.type==='text'?c.text:'';}).join('\n');
+    var clean = text.replace(/```json|```/g,'').trim();
+    // find the JSON object
+    var match = clean.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Claude returned unexpected format. Raw: '+clean.slice(0,200));
+    var parsed = JSON.parse(match[0]);
 
-    SF.news = parsed.items || parsed;
+    SF.news = Array.isArray(parsed) ? parsed : (parsed.items || []);
 
-    // Briefing
     if (parsed.briefing) {
       document.getElementById('briefing-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
       document.getElementById('briefing-text').textContent = parsed.briefing;
       document.getElementById('briefing-card').classList.add('visible');
     }
 
-    sfProgress(100, `${SF.news.length} signals loaded`);
-    document.getElementById('last-update').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    sfProgress(100, SF.news.length+' signals loaded'+(raw.length===0?' (knowledge-based — feeds unavailable)':''));
+    document.getElementById('last-update').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     sfRender();
-    setTimeout(()=>{ document.getElementById('progress-bar-wrap').style.display='none'; }, 1800);
+    setTimeout(function(){ document.getElementById('progress-bar-wrap').style.display='none'; }, 2000);
 
   } catch(e) {
-    const err = document.getElementById('error-msg');
+    var err = document.getElementById('error-msg');
     err.style.display = 'block';
-    err.textContent = '⚠ ' + e.message + ' — The CORS proxy may be temporarily slow. Try refreshing.';
+    err.innerHTML = '<strong>Error loading signals:</strong> '+e.message
+      +'<br><br>This is usually a temporary issue. <strong>Try clicking Refresh again</strong> — it tries multiple proxy servers automatically.'
+      +'<br><br>If it keeps failing, the dashboard will still work using Claude\'s built-in knowledge of recent auto news.';
     document.getElementById('progress-bar-wrap').style.display = 'none';
   }
 
-  btn.disabled = false;
-  icon.className = ''; icon.textContent = '↺';
-  lbl.textContent = 'Refresh';
+  btn.disabled=false; icon.className=''; icon.textContent='↺'; lbl.textContent='Refresh';
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────────────────────────
 sfLoad();
 sfBuildBrands();
 sfBuildSources();
 sfBuildKeywords();
 document.getElementById('importance-range').value = SF.minImportance;
-document.getElementById('importance-val').textContent = SF.minImportance + '+';
-// restore active cat tab
-document.querySelectorAll('.nav-item').forEach(n=>{
-  n.classList.toggle('active', n.dataset.cat === SF.cat);
-});
+document.getElementById('importance-val').textContent = SF.minImportance+'+';
+document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.toggle('active', n.dataset.cat===SF.cat); });
 sfRender();
 sfFetch();
 </script>
