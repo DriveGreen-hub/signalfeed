@@ -617,7 +617,7 @@ async function sfGatherFeeds(){
 // ── Claude system prompt ──────────────────────────────────────────────────────
 var SYS='You are an automotive and tech intelligence analyst. Curate, deduplicate and score raw RSS/social items. Return ONLY valid JSON with two keys:\n'
   +'"briefing": 2-3 sentence morning summary of the biggest themes today (plain text, no markdown)\n'
-  +'"items": array of 14-22 curated news items\n\n'
+  +'"items": array of 12-16 curated news items\n\n'
   +'Each item MUST have ALL these fields:\n'
   +'{ "id": unique string, "headline": punchy ≤12-word present-tense headline, "summary": 2-3 sentences with specific facts/model names/specs/prices, "brand": primary brand name or null, "category": one of "china"|"ev"|"tech"|"charging"|"press"|"social", "source": short source key, "sourceLabel": readable source name e.g. "Electrek" "X/Twitter" "Google News" "Reddit" "CnEVPost", "sentiment": "bullish"|"neutral"|"bearish", "importance": integer 1-5 where 5=breaking major news, "region": "China"|"Global"|"US"|"Europe", "timestamp": ISO8601 string for today, "url": ORIGINAL article or tweet URL copied exactly from source data — this is CRITICAL, never null if a link was provided, "tags": array of 3-5 lowercase keyword strings }\n\n'
   +'Rules: Use category "charging" for anything about charging infrastructure, MW chargers, NACS/CCS standards, charging networks, battery swap. Prioritise China EV launches, Tesla, AI/autonomous driving, charging tech, major brand announcements. Add 2-3 knowledge-based items if feeds are thin. Return ONLY the JSON object — no markdown fences, no explanation.';
@@ -657,16 +657,62 @@ async function sfFetch(){
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:6000,system:SYS,messages:[{role:'user',content:userPrompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:SYS,messages:[{role:'user',content:userPrompt}]})
     });
     sfProgress(90,'Rendering signals…');
     var data=await resp.json();
     if(data.error)throw new Error(data.error.message);
     var text=(data.content||[]).map(function(c){return c.type==='text'?c.text:'';}).join('\n');
-    var clean=text.replace(/```json|```/g,'').trim();
-    var m=clean.match(/\{[\s\S]*\}/);
-    if(!m)throw new Error('Unexpected Claude response: '+clean.slice(0,200));
-    var parsed=JSON.parse(m[0]);
+    // Robust JSON extraction and repair
+    var clean=text.replace(/```json|```/g,'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,'').trim();
+
+    function sfExtractJSON(str){
+      // Try full object match first
+      var m=str.match(/\{[\s\S]*\}/);
+      if(!m) throw new Error('No JSON object found in response');
+      var candidate=m[0];
+
+      // First attempt — direct parse
+      try{ return JSON.parse(candidate); }catch(e1){}
+
+      // Second attempt — truncated JSON: find last complete item by trimming after last }
+      // before the closing array bracket
+      try{
+        // find the items array, truncate after last complete object
+        var itemsIdx=candidate.indexOf('"items"');
+        if(itemsIdx>-1){
+          var arrStart=candidate.indexOf('[',itemsIdx);
+          if(arrStart>-1){
+            var prefix=candidate.slice(0,arrStart+1);
+            var arrContent=candidate.slice(arrStart+1);
+            // find last complete object (ends with })
+            var lastClose=arrContent.lastIndexOf('},');
+            if(lastClose===-1) lastClose=arrContent.lastIndexOf('}');
+            if(lastClose>-1){
+              var trimmed=prefix+arrContent.slice(0,lastClose+1)+']}';
+              // add briefing back if present
+              var briefM=candidate.match(/"briefing"\s*:\s*"([^"]*(?:\\"[^"]*)*)"/);
+              if(briefM) trimmed='{"briefing":'+JSON.stringify(briefM[1].replace(/\\n/g,'\n'))+','+trimmed.slice(1);
+              return JSON.parse(trimmed);
+            }
+          }
+        }
+      }catch(e2){}
+
+      // Third attempt — replace common bad chars and retry
+      try{
+        var fixed=candidate
+          .replace(/,\s*}/g,'}')
+          .replace(/,\s*]/g,']')
+          .replace(/([{,]\s*)(\w+)(\s*:)/g,'$1"$2"$3')
+          .replace(/:\s*'([^']*)'/g,':"$1"');
+        return JSON.parse(fixed);
+      }catch(e3){}
+
+      throw new Error('Could not parse JSON after multiple attempts. First error: '+e1.message);
+    }
+
+    var parsed=sfExtractJSON(clean);
     SF.news=Array.isArray(parsed)?parsed:(parsed.items||[]);
 
     if(parsed.briefing){
