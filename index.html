@@ -1,210 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SignalFeed — Auto & Tech Intelligence</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg:#0a0a0a; --bg2:#111111; --bg3:#161616; --border:#1e1e1e; --border2:#282828;
-    --text:#e8e8e0; --text2:#888880; --text3:#444440;
-    --accent:#c8f060; --accent2:#8ab840; --red:#ff4444; --orange:#ff9900;
-    --green:#44cc88; --blue:#4488ff; --china:#e6162d;
-    --font-head:'Syne',sans-serif; --font-serif:'DM Serif Display',serif;
-    --font-body:'DM Sans',sans-serif; --radius:6px; --radius-lg:10px;
-  }
-  html{font-size:14px}
-  body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
-  ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-  #app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
-  #topbar{border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200;padding:0 24px;display:flex;align-items:stretch;justify-content:space-between;height:56px}
-  #topbar-left{display:flex;align-items:center;gap:20px}
-  #logo{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:-0.03em;color:var(--text);text-decoration:none}
-  #logo span{color:var(--accent)}
-  #topbar-right{display:flex;align-items:center;gap:12px}
-  #last-update{font-size:11px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.04em}
-  #main{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 56px)}
-  #sidebar{border-right:1px solid var(--border);padding:20px 16px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column;gap:24px;background:var(--bg)}
-  .sst{font-size:9px;font-family:var(--font-head);letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-bottom:9px}
-  #stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px}
-  .stat-num{font-size:22px;font-family:var(--font-head);font-weight:700;line-height:1;margin-bottom:3px}
-  .stat-label{font-size:10px;color:var(--text3);letter-spacing:0.05em}
-  .nav-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:var(--radius);cursor:pointer;font-size:12px;font-family:var(--font-head);font-weight:500;color:var(--text2);transition:all 0.15s;border:1px solid transparent;user-select:none}
-  .nav-item:hover{background:var(--bg2);color:var(--text)}
-  .nav-item.active{background:var(--bg3);color:var(--accent);border-color:var(--border)}
-  .nav-icon{font-size:13px;margin-right:7px;opacity:0.7}
-  .nav-count{font-size:10px;color:var(--text3);font-weight:400}
-  .nav-item.active .nav-count{color:var(--accent2)}
-  #brand-tags{display:flex;flex-wrap:wrap;gap:5px}
-  .brand-tag{font-size:10px;font-family:var(--font-head);padding:3px 8px;border:1px solid var(--border);border-radius:3px;cursor:pointer;color:var(--text3);transition:all 0.15s;background:none}
-  .brand-tag:hover{color:var(--text);border-color:var(--border2)}
-  .brand-tag.active{color:var(--accent);border-color:var(--accent2);background:#c8f06010}
-  #keyword-list{display:flex;flex-direction:column;gap:5px}
-  .keyword-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-size:11px;color:var(--text2)}
-  .keyword-item button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
-  .keyword-item button:hover{color:var(--red)}
-  .add-row{display:flex;gap:5px;margin-top:5px}
-  .add-row input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:6px 10px;font-size:11px;font-family:var(--font-body);outline:none}
-  .add-row input:focus{border-color:var(--border2)}
-  .add-row input::placeholder{color:var(--text3)}
-  #account-list{display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto}
-  .account-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-size:11px}
-  .account-handle{color:var(--accent2);font-family:var(--font-head);font-size:10px}
-  .account-name{color:var(--text2);font-size:11px}
-  .account-item button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
-  .account-item button:hover{color:var(--red)}
-  #source-list{display:flex;flex-direction:column;gap:5px}
-  .source-row{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:var(--radius);background:var(--bg2);border:1px solid var(--border);font-size:11px}
-  .source-dot{width:7px;height:7px;border-radius:50%;margin-right:7px;flex-shrink:0}
-  .source-label{color:var(--text2);display:flex;align-items:center}
-  .toggle{position:relative;width:28px;height:16px;cursor:pointer;flex-shrink:0}
-  .toggle input{opacity:0;width:0;height:0}
-  .toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:8px;transition:0.2s}
-  .toggle-slider::before{content:'';position:absolute;width:10px;height:10px;border-radius:50%;background:var(--text3);bottom:3px;left:3px;transition:0.2s}
-  .toggle input:checked+.toggle-slider{background:var(--accent2)}
-  .toggle input:checked+.toggle-slider::before{transform:translateX(12px);background:var(--bg)}
-  #importance-wrap{display:flex;align-items:center;gap:8px}
-  #importance-wrap input[type=range]{flex:1;accent-color:var(--accent)}
-  #importance-val{font-size:11px;color:var(--accent);font-family:var(--font-head);min-width:18px}
-  #content{padding:20px 24px;max-width:920px}
-  #briefing-card{background:linear-gradient(135deg,#141a0e 0%,#0f1a0a 100%);border:1px solid #2a3820;border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:20px;display:none}
-  #briefing-card.visible{display:block}
-  #briefing-date{font-size:10px;font-family:var(--font-head);color:var(--accent2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
-  #briefing-title{font-size:13px;font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:8px}
-  #briefing-text{font-size:13px;color:#a8c880;line-height:1.75}
-  #search-bar{display:flex;gap:8px;margin-bottom:16px;align-items:center}
-  #search-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);padding:8px 14px;font-size:12px;font-family:var(--font-body);outline:none;transition:border 0.15s}
-  #search-input:focus{border-color:var(--border2)}
-  #search-input::placeholder{color:var(--text3)}
-  #result-count{font-size:10px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.06em;white-space:nowrap}
-  #progress-bar-wrap{margin-bottom:16px;display:none}
-  #progress-bar-bg{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
-  #progress-bar-fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.6s ease;width:0%}
-  #progress-label{font-size:10px;color:var(--text3);font-family:var(--font-head);letter-spacing:0.06em;margin-top:6px}
-  .news-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:7px;transition:border-color 0.15s,background 0.15s;animation:fadeUp 0.35s ease both}
-  .news-card:hover{border-color:var(--border2);background:var(--bg3)}
-  .news-card.breaking{border-left:3px solid var(--red)}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
-  .card-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-  .card-badge{font-size:9px;font-family:var(--font-head);font-weight:600;letter-spacing:0.08em;padding:2px 6px;border-radius:3px;text-transform:uppercase}
-  .card-brand{font-size:10px;font-family:var(--font-head);color:var(--text3);letter-spacing:0.05em}
-  .card-region{font-size:10px;color:var(--text3)}
-  .breaking-label{font-size:9px;font-family:var(--font-head);letter-spacing:0.1em;color:var(--red);display:flex;align-items:center;gap:4px}
-  .breaking-dot{width:5px;height:5px;background:var(--red);border-radius:50%;animation:blink 1.2s ease infinite}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-  .card-headline{font-size:13px;font-family:var(--font-serif);color:var(--text);line-height:1.5;margin-bottom:8px;font-weight:400}
-  .card-headline a{color:inherit;text-decoration:none;border-bottom:1px solid var(--border2);transition:border-color 0.15s,color 0.15s}
-  .card-headline a:hover{color:var(--accent);border-color:var(--accent2)}
-  .card-bottom{display:flex;align-items:center;justify-content:space-between}
-  .importance-dots{display:flex;gap:3px;align-items:center}
-  .imp-dot{width:5px;height:5px;border-radius:50%}
-  .card-time{font-size:10px;color:var(--text3);font-family:var(--font-head)}
-  .card-expand{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none}
-  .card-expand.open{display:block}
-  .card-summary{font-size:12px;color:var(--text2);line-height:1.75;margin-bottom:10px}
-  .card-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-  .card-tags{display:flex;flex-wrap:wrap;gap:4px}
-  .card-tag{font-size:10px;color:var(--text3);font-family:var(--font-head);padding:2px 6px;border:1px solid var(--border);border-radius:3px}
-  .card-source-link{font-size:10px;color:var(--text3);font-family:var(--font-head);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color 0.15s;flex-shrink:0}
-  .card-source-link:hover{color:var(--accent)}
-  .card-toggle{cursor:pointer;padding:4px 0}
-  button,.btn{background:none;border:1px solid var(--border2);border-radius:var(--radius);color:var(--text2);cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:0.06em;padding:7px 14px;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
-  button:hover{border-color:var(--text3);color:var(--text)}
-  button:disabled{opacity:0.4;cursor:default}
-  .btn-accent{border-color:var(--accent2);color:var(--accent)}
-  .btn-accent:hover{background:#c8f06015}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .spinning{animation:spin 0.8s linear infinite;display:inline-block}
-  .empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
-  .empty-icon{font-size:36px;margin-bottom:12px}
-  .empty-label{font-size:12px;font-family:var(--font-head);letter-spacing:0.08em}
-  #error-msg{display:none;background:#1a0000;border:1px solid #440000;border-radius:var(--radius);padding:14px 16px;font-size:12px;color:#ff8888;margin-bottom:14px;font-family:var(--font-head);line-height:1.7}
-  #source-status{font-size:10px;color:var(--text3);font-family:var(--font-head);margin-top:8px;line-height:1.8}
-  @media(max-width:768px){#main{grid-template-columns:1fr}#sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}#content{padding:14px 16px}#topbar{padding:0 16px}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#161616;--border:#1e1e1e;--border2:#282828;
+  --text:#e8e8e0;--text2:#888880;--text3:#444440;
+  --accent:#c8f060;--accent2:#8ab840;--red:#ff4444;--orange:#ff9900;--green:#44cc88;--china:#e6162d;
+  --font-head:'Syne',sans-serif;--font-serif:'DM Serif Display',serif;--font-body:'DM Sans',sans-serif;
+  --r:6px;--rl:10px;
+}
+html{font-size:14px}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+#app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+
+/* topbar */
+#topbar{border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px}
+#logo{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:-0.03em;color:var(--text);text-decoration:none;flex-shrink:0}
+#logo span{color:var(--accent)}
+#topbar-mid{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--text3);font-family:var(--font-head)}
+#next-refresh{color:var(--text3)}
+#topbar-right{display:flex;align-items:center;gap:8px}
+select#refresh-interval{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-family:var(--font-head);font-size:11px;padding:5px 8px;outline:none;cursor:pointer}
+select#refresh-interval:hover{border-color:var(--border2)}
+
+/* layout */
+#main{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 56px)}
+#sidebar{border-right:1px solid var(--border);padding:20px 16px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column;gap:22px;background:var(--bg)}
+.sst{font-size:9px;font-family:var(--font-head);letter-spacing:0.15em;color:var(--text3);text-transform:uppercase;margin-bottom:9px}
+
+/* stats */
+#stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px}
+.stat-num{font-size:22px;font-family:var(--font-head);font-weight:700;line-height:1;margin-bottom:3px}
+.stat-label{font-size:10px;color:var(--text3);letter-spacing:0.05em}
+
+/* nav */
+.nav-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:var(--r);cursor:pointer;font-size:12px;font-family:var(--font-head);font-weight:500;color:var(--text2);transition:all 0.15s;border:1px solid transparent;user-select:none}
+.nav-item:hover{background:var(--bg2);color:var(--text)}
+.nav-item.active{background:var(--bg3);color:var(--accent);border-color:var(--border)}
+.nav-icon{font-size:13px;margin-right:7px;opacity:0.7}
+.nav-count{font-size:10px;color:var(--text3);font-weight:400}
+.nav-item.active .nav-count{color:var(--accent2)}
+
+/* brands */
+#brand-tags{display:flex;flex-wrap:wrap;gap:5px}
+.brand-tag{font-size:10px;font-family:var(--font-head);padding:3px 8px;border:1px solid var(--border);border-radius:3px;cursor:pointer;color:var(--text3);transition:all 0.15s;background:none}
+.brand-tag:hover{color:var(--text);border-color:var(--border2)}
+.brand-tag.active{color:var(--accent);border-color:var(--accent2);background:#c8f06010}
+
+/* keyword / account lists */
+.list-items{display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto}
+.list-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:11px;color:var(--text2)}
+.list-item-handle{color:var(--accent2);font-family:var(--font-head);font-size:10px}
+.list-item button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+.list-item button:hover{color:var(--red)}
+.add-row{display:flex;gap:5px;margin-top:5px}
+.add-row input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);padding:6px 10px;font-size:11px;font-family:var(--font-body);outline:none}
+.add-row input:focus{border-color:var(--border2)}
+.add-row input::placeholder{color:var(--text3)}
+
+/* sources */
+#source-list{display:flex;flex-direction:column;gap:5px}
+.source-row{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:var(--r);background:var(--bg2);border:1px solid var(--border);font-size:11px}
+.source-dot{width:7px;height:7px;border-radius:50%;margin-right:7px;flex-shrink:0}
+.source-label{color:var(--text2);display:flex;align-items:center}
+.toggle{position:relative;width:28px;height:16px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:8px;transition:.2s}
+.toggle-slider::before{content:'';position:absolute;width:10px;height:10px;border-radius:50%;background:var(--text3);bottom:3px;left:3px;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--accent2)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(12px);background:var(--bg)}
+
+/* importance */
+#importance-wrap{display:flex;align-items:center;gap:8px}
+#importance-wrap input[type=range]{flex:1;accent-color:var(--accent)}
+#importance-val{font-size:11px;color:var(--accent);font-family:var(--font-head);min-width:18px}
+
+/* content */
+#content{padding:20px 24px;max-width:920px}
+
+/* briefing */
+#briefing-card{background:linear-gradient(135deg,#141a0e,#0f1a0a);border:1px solid #2a3820;border-radius:var(--rl);padding:18px 20px;margin-bottom:20px;display:none}
+#briefing-card.visible{display:block}
+#briefing-date{font-size:10px;font-family:var(--font-head);color:var(--accent2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+#briefing-title{font-size:13px;font-family:var(--font-head);font-weight:700;color:var(--accent);margin-bottom:8px}
+#briefing-text{font-size:13px;color:#a8c880;line-height:1.75}
+
+/* progress */
+#progress-bar-wrap{margin-bottom:16px;display:none}
+#progress-bar-bg{height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+#progress-bar-fill{height:100%;background:var(--accent);border-radius:1px;transition:width .6s ease;width:0%}
+#progress-label{font-size:10px;color:var(--text3);font-family:var(--font-head);margin-top:6px}
+
+/* search */
+#search-bar{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+#search-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);padding:8px 14px;font-size:12px;font-family:var(--font-body);outline:none;transition:border .15s}
+#search-input:focus{border-color:var(--border2)}
+#search-input::placeholder{color:var(--text3)}
+#result-count{font-size:10px;color:var(--text3);font-family:var(--font-head);white-space:nowrap}
+
+/* error */
+#error-msg{display:none;background:#1a0000;border:1px solid #440000;border-radius:var(--r);padding:14px 16px;font-size:12px;color:#ff8888;margin-bottom:14px;font-family:var(--font-head);line-height:1.7}
+#source-status{font-size:10px;color:var(--text3);font-family:var(--font-head);margin-top:8px;line-height:1.8}
+
+/* cards */
+.news-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;margin-bottom:7px;transition:border-color .15s,background .15s;animation:fadeUp .35s ease both}
+.news-card:hover{border-color:var(--border2);background:var(--bg3)}
+.news-card.breaking{border-left:3px solid var(--red)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.card-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.card-badge{font-size:9px;font-family:var(--font-head);font-weight:600;letter-spacing:.08em;padding:2px 6px;border-radius:3px;text-transform:uppercase}
+.card-brand{font-size:10px;font-family:var(--font-head);color:var(--text3);letter-spacing:.05em}
+.card-region{font-size:10px;color:var(--text3);white-space:nowrap}
+.breaking-label{font-size:9px;font-family:var(--font-head);letter-spacing:.1em;color:var(--red);display:flex;align-items:center;gap:4px}
+.breaking-dot{width:5px;height:5px;background:var(--red);border-radius:50%;animation:blink 1.2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.card-headline{font-size:14px;font-family:var(--font-serif);color:var(--text);line-height:1.5;margin-bottom:8px;font-weight:400;cursor:pointer}
+.card-headline a{color:inherit;text-decoration:none;border-bottom:1px solid #333;padding-bottom:1px;transition:color .15s,border-color .15s}
+.card-headline a:hover{color:var(--accent);border-color:var(--accent2)}
+.card-bottom{display:flex;align-items:center;justify-content:space-between}
+.imp-dots{display:flex;gap:3px;align-items:center}
+.imp-dot{width:5px;height:5px;border-radius:50%}
+.card-time{font-size:10px;color:var(--text3);font-family:var(--font-head)}
+.card-expand{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none}
+.card-expand.open{display:block}
+.card-summary{font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:10px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px}
+.card-tag{font-size:10px;color:var(--text3);font-family:var(--font-head);padding:2px 6px;border:1px solid var(--border);border-radius:3px}
+.src-link{font-size:11px;color:var(--accent2);font-family:var(--font-head);text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:color .15s;border:1px solid #2a3820;border-radius:3px;padding:3px 8px}
+.src-link:hover{color:var(--accent);border-color:var(--accent)}
+
+/* buttons */
+button,.btn{background:none;border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:.06em;padding:7px 14px;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+button:hover{border-color:var(--text3);color:var(--text)}
+button:disabled{opacity:.4;cursor:default}
+.btn-accent{border-color:var(--accent2);color:var(--accent)}
+.btn-accent:hover{background:#c8f06015}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinning{animation:spin .8s linear infinite;display:inline-block}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:12px}
+.empty-label{font-size:12px;font-family:var(--font-head);letter-spacing:.08em}
+
+@media(max-width:768px){#main{grid-template-columns:1fr}#sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}#content{padding:14px 16px}#topbar{padding:0 16px}#topbar-mid{display:none}}
 </style>
 </head>
 <body>
 <div id="app">
   <header id="topbar">
-    <div id="topbar-left">
-      <a id="logo" href="#">Signal<span>Feed</span></a>
+    <a id="logo" href="#">Signal<span>Feed</span></a>
+    <div id="topbar-mid">
       <span id="last-update"></span>
+      <span id="next-refresh"></span>
     </div>
     <div id="topbar-right">
+      <select id="refresh-interval" onchange="sfSetInterval(this.value)" title="Auto-refresh interval">
+        <option value="0">Manual only</option>
+        <option value="60" selected>Every 1h</option>
+        <option value="120">Every 2h</option>
+        <option value="360">Every 6h</option>
+        <option value="720">Every 12h</option>
+      </select>
       <button id="refresh-btn" onclick="sfFetch()">
         <span id="refresh-icon">↺</span>
         <span id="refresh-label">Refresh</span>
       </button>
     </div>
   </header>
+
   <div id="main">
     <aside id="sidebar">
 
-      <!-- Stats -->
       <div>
         <div class="sst">Today's signals</div>
         <div id="stats-grid">
-          <div class="stat-card"><div class="stat-num" id="st-total" style="color:var(--text)">—</div><div class="stat-label">total</div></div>
+          <div class="stat-card"><div class="stat-num" id="st-total"    style="color:var(--text)">—</div><div class="stat-label">total</div></div>
           <div class="stat-card"><div class="stat-num" id="st-breaking" style="color:var(--red)">—</div><div class="stat-label">breaking</div></div>
-          <div class="stat-card"><div class="stat-num" id="st-china" style="color:var(--china)">—</div><div class="stat-label">china</div></div>
-          <div class="stat-card"><div class="stat-num" id="st-bullish" style="color:var(--green)">—</div><div class="stat-label">bullish</div></div>
+          <div class="stat-card"><div class="stat-num" id="st-china"    style="color:var(--china)">—</div><div class="stat-label">china</div></div>
+          <div class="stat-card"><div class="stat-num" id="st-bullish"  style="color:var(--green)">—</div><div class="stat-label">bullish</div></div>
         </div>
       </div>
 
-      <!-- Channels -->
       <div>
         <div class="sst">Channels</div>
         <nav>
-          <div class="nav-item active" data-cat="all"    onclick="sfSetCat(this,'all')">   <span><span class="nav-icon">◈</span>All signals</span>   <span class="nav-count" id="nc-all">0</span></div>
-          <div class="nav-item" data-cat="china"  onclick="sfSetCat(this,'china')"> <span><span class="nav-icon">⬡</span>China launches</span> <span class="nav-count" id="nc-china">0</span></div>
-          <div class="nav-item" data-cat="ev"     onclick="sfSetCat(this,'ev')">    <span><span class="nav-icon">⚡</span>EV & Tesla</span>      <span class="nav-count" id="nc-ev">0</span></div>
-          <div class="nav-item" data-cat="tech"   onclick="sfSetCat(this,'tech')">  <span><span class="nav-icon">◎</span>Tech & AI</span>        <span class="nav-count" id="nc-tech">0</span></div>
-          <div class="nav-item" data-cat="press"  onclick="sfSetCat(this,'press')"> <span><span class="nav-icon">◆</span>Press releases</span>  <span class="nav-count" id="nc-press">0</span></div>
-          <div class="nav-item" data-cat="social" onclick="sfSetCat(this,'social')"><span><span class="nav-icon">⊕</span>X / Social</span>       <span class="nav-count" id="nc-social">0</span></div>
-          <div class="nav-item" data-cat="charging" onclick="sfSetCat(this,'charging')"><span><span class="nav-icon">⏚</span>Charging Infra</span>  <span class="nav-count" id="nc-charging">0</span></div>
+          <div class="nav-item active" data-cat="all"      onclick="sfSetCat(this,'all')">      <span><span class="nav-icon">◈</span>All signals</span>    <span class="nav-count" id="nc-all">0</span></div>
+          <div class="nav-item"        data-cat="china"    onclick="sfSetCat(this,'china')">    <span><span class="nav-icon">⬡</span>China launches</span>  <span class="nav-count" id="nc-china">0</span></div>
+          <div class="nav-item"        data-cat="ev"       onclick="sfSetCat(this,'ev')">       <span><span class="nav-icon">⚡</span>EV & Tesla</span>       <span class="nav-count" id="nc-ev">0</span></div>
+          <div class="nav-item"        data-cat="tech"     onclick="sfSetCat(this,'tech')">     <span><span class="nav-icon">◎</span>Tech & AI</span>         <span class="nav-count" id="nc-tech">0</span></div>
+          <div class="nav-item"        data-cat="charging" onclick="sfSetCat(this,'charging')"> <span><span class="nav-icon">⏚</span>Charging Infra</span>   <span class="nav-count" id="nc-charging">0</span></div>
+          <div class="nav-item"        data-cat="press"    onclick="sfSetCat(this,'press')">    <span><span class="nav-icon">◆</span>Press releases</span>   <span class="nav-count" id="nc-press">0</span></div>
+          <div class="nav-item"        data-cat="social"   onclick="sfSetCat(this,'social')">   <span><span class="nav-icon">⊕</span>X / Social</span>        <span class="nav-count" id="nc-social">0</span></div>
         </nav>
       </div>
 
-      <!-- Brand watchlist -->
       <div>
         <div class="sst">Brand watchlist</div>
         <div id="brand-tags"></div>
       </div>
 
-      <!-- Keyword alerts -->
       <div>
         <div class="sst">Keyword alerts</div>
-        <div id="keyword-list"></div>
+        <div id="keyword-list" class="list-items"></div>
         <div class="add-row">
-          <input id="kw-input" type="text" placeholder="e.g. solid state…" onkeydown="if(event.key==='Enter')sfAddKeyword()" />
-          <button onclick="sfAddKeyword()" class="btn-accent" style="flex-shrink:0;font-size:11px;padding:5px 10px">+ Add</button>
+          <input id="kw-input" type="text" placeholder="e.g. solid state…" onkeydown="if(event.key==='Enter')sfAddKeyword()"/>
+          <button onclick="sfAddKeyword()" class="btn-accent" style="flex-shrink:0;padding:5px 10px">+ Add</button>
         </div>
       </div>
 
-      <!-- X Accounts -->
       <div>
         <div class="sst">X accounts to watch</div>
-        <div id="account-list"></div>
-        <div class="add-row" style="margin-top:5px">
-          <input id="acc-input" type="text" placeholder="@handle or handle" onkeydown="if(event.key==='Enter')sfAddAccount()" />
-          <button onclick="sfAddAccount()" class="btn-accent" style="flex-shrink:0;font-size:11px;padding:5px 10px">+ Add</button>
+        <div id="account-list" class="list-items"></div>
+        <div class="add-row">
+          <input id="acc-input" type="text" placeholder="@handle" onkeydown="if(event.key==='Enter')sfAddAccount()"/>
+          <button onclick="sfAddAccount()" class="btn-accent" style="flex-shrink:0;padding:5px 10px">+ Add</button>
         </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.6">Posts fetched via Nitter RSS (free, no API key)</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.6">Via Nitter RSS — no API key needed</div>
       </div>
 
-      <!-- Sources -->
       <div>
         <div class="sst">Active sources</div>
         <div id="source-list"></div>
         <div id="source-status"></div>
       </div>
 
-      <!-- Importance -->
       <div>
         <div class="sst">Min. importance</div>
         <div id="importance-wrap">
@@ -238,88 +266,80 @@
 </div>
 
 <script>
-// ── Default X accounts to watch ───────────────────────────────────────────────
-var DEFAULT_ACCOUNTS = [
-  { handle:'tphuang',         name:'Tim Huang (China EV)' },
-  { handle:'thinkercar',      name:'Thinker Car' },
-  { handle:'electricfelix',   name:'Felix (EV analyst)' },
-  { handle:'niccruzpatane',   name:'Nic Cruz Patane' },
-  { handle:'SawyerMerritt',   name:'Sawyer Merritt (Tesla)' },
-  { handle:'XuFei_Xiaomi',    name:'Xu Fei — Xiaomi Auto' },
-  { handle:'Alejandroperez',  name:'Alejandro Perez' },
-  { handle:'CnEVPost',        name:'CnEVPost' },
-  { handle:'kimmonismus',     name:'Kim Monismus' },
-  { handle:'NotATeslaApp',    name:'Not A Tesla App' },
-  { handle:'XH_Lee23',        name:'XH Lee' },
-  { handle:'kyleichan',       name:'Kyle Chan' },
-  { handle:'MarcoRPi1',       name:'Marco R.' },
-  { handle:'CarNewsChina',    name:'Car News China' },
-  { handle:'tslaming',        name:'TSla Ming' },
+// ── Config ────────────────────────────────────────────────────────────────────
+var DEFAULT_ACCOUNTS=[
+  {handle:'tphuang',       name:'Tim Huang (China EV)'},
+  {handle:'thinkercar',    name:'Thinker Car'},
+  {handle:'electricfelix', name:'Felix (EV analyst)'},
+  {handle:'niccruzpatane', name:'Nic Cruz Patane'},
+  {handle:'SawyerMerritt', name:'Sawyer Merritt (Tesla)'},
+  {handle:'XuFei_Xiaomi',  name:'Xu Fei — Xiaomi Auto'},
+  {handle:'Alejandroperez',name:'Alejandro Perez'},
+  {handle:'CnEVPost',      name:'CnEVPost'},
+  {handle:'kimmonismus',   name:'Kim Monismus'},
+  {handle:'NotATeslaApp',  name:'Not A Tesla App'},
+  {handle:'XH_Lee23',      name:'XH Lee'},
+  {handle:'kyleichan',     name:'Kyle Chan'},
+  {handle:'MarcoRPi1',     name:'Marco R.'},
+  {handle:'CarNewsChina',  name:'Car News China'},
+  {handle:'tslaming',      name:'TSla Ming'},
 ];
-
-// ── Nitter instances — tried in order ─────────────────────────────────────────
-var NITTER_INSTANCES = [
+var BRANDS=['BYD','NIO','Xpeng','Li Auto','Tesla','Zeekr','Huawei','Yangwang','BMW','Mercedes','Audi','Skoda','Volkswagen','Toyota','Xiaomi Auto','Rivian','Lucid'];
+var NITTER=[
   'https://nitter.poast.org',
   'https://nitter.privacydev.net',
-  'https://nitter.nl',
-  'https://nitter.esmailelbob.xyz',
+  'https://nitter.tiekoetter.com',
+  'https://nitter.1d4.us',
 ];
 
 // ── State ─────────────────────────────────────────────────────────────────────
-var SF = {
-  news:[], cat:'all', brandFilter:'', minImportance:1, keywords:[],
-  accounts: JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS)),
+var SF={
+  news:[],cat:'all',brandFilter:'',minImportance:1,keywords:[],
+  accounts:JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS)),
+  refreshInterval:60,   // minutes; 0 = manual
   sources:{
-    google_en:{ label:'Google News EN', color:'#EA4335', enabled:true },
-    google_cn:{ label:'Google News CN', color:'#e6162d', enabled:true },
-    xaccounts:{ label:'X Accounts (Nitter)', color:'#888',    enabled:true },
-    reddit:   { label:'Reddit',          color:'#FF6314', enabled:true },
-    electrek: { label:'Electrek RSS',    color:'#44cc88', enabled:true },
-    cnevpost: { label:'CnEVPost RSS',    color:'#4488ff', enabled:true },
+    google_en:{label:'Google News EN',color:'#EA4335',enabled:true},
+    google_cn:{label:'Google News CN',color:'#e6162d',enabled:true},
+    xaccounts: {label:'X Accounts (Nitter)',color:'#888',enabled:true},
+    reddit:    {label:'Reddit',color:'#FF6314',enabled:true},
+    electrek:  {label:'Electrek',color:'#44cc88',enabled:true},
+    cnevpost:  {label:'CnEVPost',color:'#4488ff',enabled:true},
   }
 };
-var BRANDS=['BYD','NIO','Xpeng','Li Auto','Tesla','Zeekr','Huawei','Yangwang','BMW','Mercedes','Volkswagen','Audi','Skoda','Toyota','Xiaomi Auto','Rivian','Lucid'];
+var _refreshTimer=null;
 
-// ── CORS proxies ──────────────────────────────────────────────────────────────
-var PROXIES=[
-  function(u){return 'https://api.allorigins.win/get?url='+encodeURIComponent(u);},
-  function(u){return 'https://corsproxy.io/?'+encodeURIComponent(u);},
-  function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);},
-];
-
+// ── Proxy — uses our own Vercel serverless function ───────────────────────────
 async function fetchProxy(url){
-  for(var i=0;i<PROXIES.length;i++){
-    try{
-      var r=await fetch(PROXIES[i](url),{signal:AbortSignal.timeout(9000)});
-      if(!r.ok) continue;
-      var j=await r.json();
-      var t=j.contents!==undefined?j.contents:(typeof j==='string'?j:JSON.stringify(j));
-      if(t&&t.length>80) return t;
-    }catch(e){}
-  }
-  return null;
+  // /api/proxy?url=<encoded> — runs server-side on Vercel, no CORS issues
+  var endpoint='/api/proxy?url='+encodeURIComponent(url);
+  var r=await fetch(endpoint,{signal:AbortSignal.timeout(12000)});
+  if(!r.ok) throw new Error('Proxy returned '+r.status+' for '+url);
+  return await r.text();
 }
 
-function parseRSS(xml, srcKey){
+// ── RSS parser ────────────────────────────────────────────────────────────────
+function parseRSS(xml,srcKey){
   try{
     var doc=new DOMParser().parseFromString(xml,'text/xml');
+    if(doc.querySelector('parsererror')) return [];
     return Array.from(doc.querySelectorAll('item')).slice(0,8).map(function(it){
-      // extract link — RSS link is sometimes in <link> text node or <guid>
-      var link = it.querySelector('link')?.textContent
-               || it.querySelector('guid')?.textContent
-               || '';
-      // Google News wraps real URL inside the link itself
+      // grab link — try several elements
+      var link=''
+        ||it.querySelector('link')?.textContent?.trim()
+        ||it.querySelector('guid')?.textContent?.trim()
+        ||'';
+      // unwrap Google News redirect URL
       if(link.includes('news.google.com')){
-        var m = link.match(/url=([^&]+)/);
-        if(m) try{ link = decodeURIComponent(m[1]); }catch(e){}
+        var m=link.match(/url=([^&]+)/);
+        if(m)try{link=decodeURIComponent(m[1]);}catch(e){}
       }
-      return {
-        title:   it.querySelector('title')?.textContent||'',
-        desc:    (it.querySelector('description')?.textContent||'').replace(/<[^>]+>/g,'').slice(0,300),
-        pubDate: it.querySelector('pubDate')?.textContent||'',
-        source:  it.querySelector('source')?.textContent||srcKey,
-        link:    link,
-        _src:    srcKey
+      return{
+        title:  it.querySelector('title')?.textContent||'',
+        desc:   (it.querySelector('description')?.textContent||'').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').slice(0,350),
+        pubDate:it.querySelector('pubDate')?.textContent||'',
+        source: it.querySelector('source')?.textContent||srcKey,
+        link:   link,
+        _src:   srcKey
       };
     });
   }catch(e){return [];}
@@ -328,79 +348,113 @@ function parseRSS(xml, srcKey){
 // ── Persistence ───────────────────────────────────────────────────────────────
 function sfSave(){
   try{localStorage.setItem('sf_prefs',JSON.stringify({
-    cat:SF.cat, brandFilter:SF.brandFilter, minImportance:SF.minImportance,
-    keywords:SF.keywords, accounts:SF.accounts,
+    cat:SF.cat,brandFilter:SF.brandFilter,minImportance:SF.minImportance,
+    keywords:SF.keywords,accounts:SF.accounts,refreshInterval:SF.refreshInterval,
     sources:Object.fromEntries(Object.entries(SF.sources).map(function(e){return[e[0],e[1].enabled];}))
   }));}catch(e){}
 }
 function sfLoad(){
   try{
     var p=JSON.parse(localStorage.getItem('sf_prefs')||'{}');
-    if(p.cat) SF.cat=p.cat;
-    if(p.brandFilter) SF.brandFilter=p.brandFilter;
-    if(p.minImportance) SF.minImportance=p.minImportance;
-    if(p.keywords) SF.keywords=p.keywords;
-    if(p.accounts) SF.accounts=p.accounts;
+    if(p.cat)              SF.cat=p.cat;
+    if(p.brandFilter)      SF.brandFilter=p.brandFilter;
+    if(p.minImportance)    SF.minImportance=p.minImportance;
+    if(p.keywords)         SF.keywords=p.keywords;
+    if(p.accounts)         SF.accounts=p.accounts;
+    if(p.refreshInterval!=null) SF.refreshInterval=p.refreshInterval;
     if(p.sources) Object.entries(p.sources).forEach(function(e){if(SF.sources[e[0]])SF.sources[e[0]].enabled=e[1];});
   }catch(e){}
+}
+
+// ── Auto-refresh timer ────────────────────────────────────────────────────────
+function sfSetInterval(val){
+  SF.refreshInterval=parseInt(val);
+  sfSave();
+  sfScheduleNext();
+}
+function sfScheduleNext(){
+  clearInterval(_refreshTimer);
+  document.getElementById('next-refresh').textContent='';
+  if(!SF.refreshInterval) return;
+  var ms=SF.refreshInterval*60*1000;
+  var due=Date.now()+ms;
+  _refreshTimer=setInterval(function(){sfFetch();},ms);
+  // update countdown every minute
+  function updateCountdown(){
+    var left=Math.round((due-Date.now())/60000);
+    if(left>0) document.getElementById('next-refresh').textContent='· next in '+left+'m';
+  }
+  updateCountdown();
+  setInterval(updateCountdown,60000);
 }
 
 // ── UI builders ───────────────────────────────────────────────────────────────
 function sfBuildBrands(){
   document.getElementById('brand-tags').innerHTML=BRANDS.map(function(b){
-    return '<span class="brand-tag'+(SF.brandFilter===b?' active':'')+'" onclick="sfToggleBrand(\''+b+'\')">'+b+'</span>';
+    return'<span class="brand-tag'+(SF.brandFilter===b?' active':'')+'" onclick="sfToggleBrand(\''+b+'\')">'+b+'</span>';
   }).join('');
 }
 function sfBuildSources(){
   document.getElementById('source-list').innerHTML=Object.entries(SF.sources).map(function(e){
     var k=e[0],s=e[1];
-    return '<div class="source-row"><span class="source-label"><span class="source-dot" style="background:'+s.color+'"></span>'+s.label+'</span><label class="toggle"><input type="checkbox" '+(s.enabled?'checked':'')+' onchange="sfToggleSource(\''+k+'\',this.checked)"/><span class="toggle-slider"></span></label></div>';
+    return'<div class="source-row"><span class="source-label"><span class="source-dot" style="background:'+s.color+'"></span>'+s.label+'</span>'
+      +'<label class="toggle"><input type="checkbox" '+(s.enabled?'checked':'')+' onchange="sfToggleSource(\''+k+'\',this.checked)"/><span class="toggle-slider"></span></label></div>';
   }).join('');
 }
 function sfBuildKeywords(){
   document.getElementById('keyword-list').innerHTML=SF.keywords.length
-    ?SF.keywords.map(function(kw,i){return '<div class="keyword-item"><span style="color:var(--accent)">⬡</span>&nbsp;'+kw+'<button onclick="sfRemoveKeyword('+i+')" aria-label="Remove">×</button></div>';}).join('')
+    ?SF.keywords.map(function(kw,i){
+      return'<div class="list-item"><span><span style="color:var(--accent)">⬡</span>&nbsp;'+kw+'</span>'
+        +'<button onclick="sfRemoveKeyword('+i+')" aria-label="Remove">×</button></div>';
+    }).join('')
     :'<div style="font-size:11px;color:var(--text3);padding:4px 0">No keywords yet</div>';
 }
 function sfBuildAccounts(){
-  document.getElementById('account-list').innerHTML=SF.accounts.length
-    ?SF.accounts.map(function(a,i){
-      return '<div class="account-item">'
-        +'<span><span class="account-handle">@'+a.handle+'</span>'
-        +(a.name&&a.name!==a.handle?'<span class="account-name"> · '+a.name+'</span>':'')
-        +'</span>'
-        +'<button onclick="sfRemoveAccount('+i+')" aria-label="Remove">×</button>'
-        +'</div>';
-    }).join('')
-    :'<div style="font-size:11px;color:var(--text3);padding:4px 0">No accounts added</div>';
+  document.getElementById('account-list').innerHTML=SF.accounts.map(function(a,i){
+    return'<div class="list-item">'
+      +'<span><span class="list-item-handle">@'+a.handle+'</span>'
+      +(a.name&&a.name!==a.handle?'<span style="color:var(--text3);font-size:10px"> · '+a.name+'</span>':'')+'</span>'
+      +'<button onclick="sfRemoveAccount('+i+')" aria-label="Remove">×</button>'
+      +'</div>';
+  }).join('')||'<div style="font-size:11px;color:var(--text3);padding:4px 0">No accounts</div>';
 }
 
-function sfBadgeStyle(src){
-  var c={google:'#EA4335',google_en:'#EA4335',google_cn:'#e6162d',reddit:'#FF6314',electrek:'#44cc88',cnevpost:'#4488ff',press:'#4488ff',x:'#888',nitter:'#888',web:'#44cc88'}[src]||'#888';
-  return 'background:'+c+'20;color:'+c+';border:1px solid '+c+'40;';
+function sfBadge(src){
+  var c={google_en:'#EA4335',google_cn:'#e6162d',reddit:'#FF6314',electrek:'#44cc88',cnevpost:'#4488ff',x:'#888',nitter:'#888',press:'#4488ff',web:'#44cc88'}[src]||'#888';
+  return'background:'+c+'20;color:'+c+';border:1px solid '+c+'40;';
 }
 function sfDots(n){
-  return[1,2,3,4,5].map(function(i){var c=i<=n?(n>=4?'var(--red)':n>=3?'var(--orange)':'var(--green)'):'var(--border2)';return'<span class="imp-dot" style="background:'+c+'"></span>';}).join('');
+  return[1,2,3,4,5].map(function(i){
+    var c=i<=n?(n>=4?'var(--red)':n>=3?'var(--orange)':'var(--green)'):'var(--border2)';
+    return'<span class="imp-dot" style="background:'+c+'"></span>';
+  }).join('');
 }
 function sfSenti(s){
-  if(s==='bullish') return '<span style="color:var(--green);font-size:12px">↑</span>';
-  if(s==='bearish') return '<span style="color:var(--red);font-size:12px">↓</span>';
-  return '<span style="color:var(--text3);font-size:12px">—</span>';
+  return s==='bullish'?'<span style="color:var(--green);font-size:13px" title="Bullish">↑</span>'
+        :s==='bearish'?'<span style="color:var(--red);font-size:13px"   title="Bearish">↓</span>'
+        :'<span style="color:var(--text3);font-size:13px">—</span>';
 }
 
 // ── Filters ───────────────────────────────────────────────────────────────────
-function sfSetCat(el,cat){SF.cat=cat;document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});el.classList.add('active');sfSave();sfRender();}
+function sfSetCat(el,cat){
+  SF.cat=cat;
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  el.classList.add('active');
+  sfSave();sfRender();
+}
 function sfToggleBrand(b){SF.brandFilter=SF.brandFilter===b?'':b;sfBuildBrands();sfSave();sfRender();}
 function sfToggleSource(k,v){SF.sources[k].enabled=v;sfSave();}
 function sfOnImportance(v){SF.minImportance=parseInt(v);document.getElementById('importance-val').textContent=v+'+';sfSave();sfRender();}
-function sfAddKeyword(){var inp=document.getElementById('kw-input');var kw=inp.value.trim();if(kw&&!SF.keywords.includes(kw)){SF.keywords.push(kw);sfBuildKeywords();sfSave();sfRender();}inp.value='';}
+function sfAddKeyword(){
+  var inp=document.getElementById('kw-input'),kw=inp.value.trim();
+  if(kw&&!SF.keywords.includes(kw)){SF.keywords.push(kw);sfBuildKeywords();sfSave();sfRender();}
+  inp.value='';
+}
 function sfRemoveKeyword(i){SF.keywords.splice(i,1);sfBuildKeywords();sfSave();sfRender();}
 function sfAddAccount(){
-  var inp=document.getElementById('acc-input');
-  var h=inp.value.trim().replace(/^@/,'');
+  var inp=document.getElementById('acc-input'),h=inp.value.trim().replace(/^@/,'');
   if(h&&!SF.accounts.find(function(a){return a.handle.toLowerCase()===h.toLowerCase();})){
-    SF.accounts.push({handle:h,name:h});
-    sfBuildAccounts();sfSave();
+    SF.accounts.push({handle:h,name:h});sfBuildAccounts();sfSave();
   }
   inp.value='';
 }
@@ -409,11 +463,18 @@ function sfRemoveAccount(i){SF.accounts.splice(i,1);sfBuildAccounts();sfSave();}
 // ── Render ────────────────────────────────────────────────────────────────────
 function sfRender(){
   var q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  var cats=['all','china','ev','tech','charging','press','social'];
   var filtered=SF.news.filter(function(item){
-    if(SF.cat!=='all'&&item.category!==SF.cat) return false;
-    if(SF.brandFilter&&!(item.brand||'').toLowerCase().includes(SF.brandFilter.toLowerCase())&&!(item.headline||'').toLowerCase().includes(SF.brandFilter.toLowerCase())) return false;
-    if((item.importance||1)<SF.minImportance) return false;
-    if(q&&!(item.headline||'').toLowerCase().includes(q)&&!(item.brand||'').toLowerCase().includes(q)&&!(item.summary||'').toLowerCase().includes(q)&&!(item.tags||[]).some(function(t){return t.toLowerCase().includes(q);})) return false;
+    if(SF.cat!=='all'&&item.category!==SF.cat)return false;
+    if(SF.brandFilter){
+      var h=(item.brand||'').toLowerCase(),t=(item.headline||'').toLowerCase();
+      if(!h.includes(SF.brandFilter.toLowerCase())&&!t.includes(SF.brandFilter.toLowerCase()))return false;
+    }
+    if((item.importance||1)<SF.minImportance)return false;
+    if(q){
+      var search=(item.headline||'')+(item.brand||'')+(item.summary||'')+(item.tags||[]).join(' ');
+      if(!search.toLowerCase().includes(q))return false;
+    }
     return true;
   }).sort(function(a,b){return(b.importance||0)-(a.importance||0);});
 
@@ -421,48 +482,52 @@ function sfRender(){
   document.getElementById('st-breaking').textContent=SF.news.filter(function(i){return i.importance>=4;}).length;
   document.getElementById('st-china').textContent   =SF.news.filter(function(i){return i.region==='China';}).length;
   document.getElementById('st-bullish').textContent =SF.news.filter(function(i){return i.sentiment==='bullish';}).length;
-  ['all','china','ev','tech','press','social','charging'].forEach(function(c){
+  cats.forEach(function(c){
     var el=document.getElementById('nc-'+c);
-    if(el) el.textContent=c==='all'?SF.news.length:SF.news.filter(function(i){return i.category===c;}).length;
+    if(el)el.textContent=c==='all'?SF.news.length:SF.news.filter(function(i){return i.category===c;}).length;
   });
   document.getElementById('result-count').textContent=filtered.length+' signal'+(filtered.length!==1?'s':'');
 
   var feed=document.getElementById('feed');
   if(!filtered.length){
-    feed.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-label">'+(SF.news.length?'No signals match this filter':'Hit Refresh to load today\'s intelligence')+'</div></div>';
+    feed.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-label">'
+      +(SF.news.length?'No signals match this filter':'Hit Refresh to load today\'s intelligence')+'</div></div>';
     return;
   }
+
   feed.innerHTML=filtered.map(function(item,idx){
     var breaking=item.importance>=4;
     var t=item.timestamp?new Date(item.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
-    var hasKw=SF.keywords.some(function(kw){return(item.headline||'').toLowerCase().includes(kw.toLowerCase())||(item.summary||'').toLowerCase().includes(kw.toLowerCase());});
-    var tags=(item.tags||[]).slice(0,5).map(function(t){return'<span class="card-tag">#'+t+'</span>';}).join('');
-    // headline — link if URL exists
+    var hasKw=SF.keywords.some(function(kw){
+      return(item.headline||'').toLowerCase().includes(kw.toLowerCase())||(item.summary||'').toLowerCase().includes(kw.toLowerCase());
+    });
     var url=item.url||item.link||'';
+    var tags=(item.tags||[]).slice(0,5).map(function(tg){return'<span class="card-tag">#'+tg+'</span>';}).join('');
     var headlineHtml=url
       ?'<a href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+(item.headline||'')+'</a>'
       :(item.headline||'');
-    // source link
-    var srcLink=url
-      ?'<a class="card-source-link" href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open source ↗</a>'
+    var srcLinkHtml=url
+      ?'<a class="src-link" href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open source ↗</a>'
       :'';
-    return '<div class="news-card'+(breaking?' breaking':'')+'" style="animation-delay:'+Math.min(idx*0.04,0.5)+'s'+(hasKw?';border-color:#c8f06040':'')+'" onclick="sfExpand(this)">'
+    return'<div class="news-card'+(breaking?' breaking':'')+'" '
+      +'style="animation-delay:'+Math.min(idx*.04,.5)+'s'+(hasKw?';border-color:#c8f06040':'')+'" '
+      +'onclick="sfExpand(this)">'
       +'<div class="card-top"><div class="card-meta">'
-      +'<span class="card-badge" style="'+sfBadgeStyle(item.source)+'">'+(item.sourceLabel||item.source||'web')+'</span>'
+      +'<span class="card-badge" style="'+sfBadge(item.source)+'">'+(item.sourceLabel||item.source||'web')+'</span>'
       +(item.brand?'<span class="card-brand">'+item.brand+'</span>':'')
       +(breaking?'<span class="breaking-label"><span class="breaking-dot"></span>BREAKING</span>':'')
-      +(hasKw?'<span class="card-badge" style="background:#c8f06020;color:var(--accent);border-color:#8ab84040">⬡ alert</span>':'')
+      +(hasKw?'<span class="card-badge" style="background:#c8f06020;color:var(--accent);border:1px solid #8ab84040">⬡ alert</span>':'')
       +'</div><span class="card-region">'+(item.region||'')+'</span></div>'
-      +'<div class="card-headline card-toggle">'+headlineHtml+'</div>'
-      +'<div class="card-bottom"><div class="importance-dots">'+sfDots(item.importance||2)+'</div>'
-      +'<div style="display:flex;align-items:center;gap:8px">'+sfSenti(item.sentiment)+'<span class="card-time">'+t+'</span></div></div>'
-      +'<div class="card-expand">'
-      +'<p class="card-summary">'+(item.summary||'')+'</p>'
-      +'<div class="card-footer"><div class="card-tags">'+tags+'</div>'+srcLink+'</div>'
+      +'<div class="card-headline">'+headlineHtml+'</div>'
+      +'<div class="card-bottom"><div class="imp-dots">'+sfDots(item.importance||2)+'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px">'+sfSenti(item.sentiment)
+      +'<span class="card-time">'+t+'</span></div></div>'
+      +'<div class="card-expand"><p class="card-summary">'+(item.summary||'')+'</p>'
+      +'<div class="card-footer"><div class="card-tags">'+tags+'</div>'+srcLinkHtml+'</div>'
       +'</div></div>';
   }).join('');
 }
-function sfExpand(el){el.querySelector('.card-expand').classList.toggle('open');el.classList.toggle('expanded');}
+function sfExpand(el){el.querySelector('.card-expand').classList.toggle('open');}
 
 // ── Progress ──────────────────────────────────────────────────────────────────
 function sfProgress(pct,label){
@@ -470,112 +535,97 @@ function sfProgress(pct,label){
   document.getElementById('progress-label').textContent=label;
 }
 
-// ── Nitter RSS for X accounts ─────────────────────────────────────────────────
-async function fetchNitterAccount(handle){
-  for(var n=0;n<NITTER_INSTANCES.length;n++){
-    var url=NITTER_INSTANCES[n]+'/'+handle+'/rss';
-    var text=await fetchProxy(url);
-    if(!text) continue;
-    var items=parseRSS(text,'x');
-    if(items.length){
-      return items.map(function(it){
-        // build real twitter link from nitter link
-        var tweetLink=it.link?it.link.replace(NITTER_INSTANCES[n],'https://x.com').replace('/nitter.','https://x.com/'):('https://x.com/'+handle);
-        return Object.assign({},it,{link:tweetLink,_xhandle:'@'+handle});
-      });
-    }
+// ── Nitter fetch ──────────────────────────────────────────────────────────────
+async function fetchNitter(handle){
+  for(var i=0;i<NITTER.length;i++){
+    try{
+      var text=await fetchProxy(NITTER[i]+'/'+handle+'/rss');
+      var items=parseRSS(text,'x');
+      if(items.length){
+        return items.map(function(it){
+          var tweetLink=(it.link||'').replace(NITTER[i],'https://x.com');
+          return Object.assign({},it,{link:tweetLink,_xhandle:'@'+handle});
+        });
+      }
+    }catch(e){}
   }
   return [];
 }
 
 // ── Feed gathering ────────────────────────────────────────────────────────────
 async function sfGatherFeeds(){
-  var raw=[];
-  var ok=[];
-  var fail=[];
-  var tasks=[];
+  var raw=[],ok=[],fail=[],tasks=[];
 
   function addRSS(label,url,srcKey){
     tasks.push(fetchProxy(url).then(function(text){
-      if(!text){fail.push(label);return;}
       var items=parseRSS(text,srcKey);
-      items.forEach(function(i){raw.push(i);});
-      if(items.length) ok.push(label+' ('+items.length+')');
-      else fail.push(label+' (empty)');
+      if(items.length){items.forEach(function(i){raw.push(i);});ok.push(label+'('+items.length+')');}
+      else fail.push(label);
     }).catch(function(){fail.push(label);}));
   }
 
   if(SF.sources.google_en.enabled){
-    [['China EV','BYD NIO Xpeng Li Auto Zeekr electric car 2026'],
-     ['Tesla','Tesla new model FSD autonomous 2026'],
-     ['Auto AI','autonomous driving AI automotive 2026'],
-     ['Brands','BMW Mercedes Volkswagen Toyota new car announcement 2026'],
-     ['EV Biz','electric vehicle battery launch reveal 2026'],
-     ['Charging','EV charging infrastructure megawatt charger NACS CCS 2026'],
-     ['Charging CN','充电桩 超级充电站 快充 兆瓦充电 2026'],
+    [['China EV','BYD NIO Xpeng Li Auto Zeekr Yangwang electric car 2026'],
+     ['Tesla','Tesla new model FSD Supercharger 2026'],
+     ['Auto AI','autonomous driving AI automotive software 2026'],
+     ['Brands','BMW Mercedes Audi Skoda Volkswagen Toyota new car 2026'],
+     ['EV Biz','electric vehicle battery launch 2026'],
+     ['Charging','EV charging infrastructure megawatt NACS CCS IONITY 2026'],
     ].forEach(function(q){addRSS(q[0],'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=en&gl=US&ceid=US:en','google_en');});
   }
-
   if(SF.sources.google_cn.enabled){
-    [['CN EV','比亚迪 蔚来 小鹏 新能源汽车 新车 2026'],
+    [['CN EV','比亚迪 蔚来 小鹏 仰望 新能源汽车 新车 2026'],
      ['CN Auto','华为 问界 小米汽车 极氪 发布 2026'],
+     ['CN Charge','充电桩 超级充电站 快充 兆瓦充电 2026'],
     ].forEach(function(q){addRSS(q[0],'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=zh-CN&gl=CN&ceid=CN:zh-Hans','google_cn');});
   }
-
   if(SF.sources.electrek.enabled)  addRSS('Electrek','https://electrek.co/feed/','electrek');
   if(SF.sources.cnevpost.enabled)   addRSS('CnEVPost','https://cnevpost.com/feed/','cnevpost');
 
   if(SF.sources.reddit.enabled){
     ['electricvehicles','teslamotors','chinaEV','cars'].forEach(function(sub){
-      tasks.push(
-        fetchProxy('https://www.reddit.com/r/'+sub+'/hot.json?limit=8').then(function(text){
-          if(!text){fail.push('r/'+sub);return;}
-          try{
-            var data=JSON.parse(text);
-            var posts=data.data?.children||[];
-            posts.forEach(function(p){
-              raw.push({title:p.data.title,desc:(p.data.selftext||'').slice(0,250),
-                pubDate:new Date(p.data.created_utc*1000).toUTCString(),
-                source:'r/'+sub,link:'https://reddit.com'+p.data.permalink,_src:'reddit'});
-            });
-            ok.push('r/'+sub+' ('+posts.length+')');
-          }catch(e){fail.push('r/'+sub);}
-        }).catch(function(){fail.push('r/'+sub);})
-      );
+      tasks.push(fetchProxy('https://www.reddit.com/r/'+sub+'/hot.json?limit=8').then(function(text){
+        try{
+          var d=JSON.parse(text),posts=d.data?.children||[];
+          posts.forEach(function(p){raw.push({title:p.data.title,desc:(p.data.selftext||'').slice(0,250),
+            pubDate:new Date(p.data.created_utc*1000).toUTCString(),
+            source:'r/'+sub,link:'https://reddit.com'+p.data.permalink,_src:'reddit'});});
+          ok.push('r/'+sub+'('+posts.length+')');
+        }catch(e){fail.push('r/'+sub);}
+      }).catch(function(){fail.push('r/'+sub);}));
     });
   }
 
   if(SF.sources.xaccounts.enabled&&SF.accounts.length){
     SF.accounts.forEach(function(acc){
-      tasks.push(
-        fetchNitterAccount(acc.handle).then(function(items){
-          if(items.length){
-            items.forEach(function(i){raw.push(i);});
-            ok.push('@'+acc.handle+' ('+items.length+')');
-          } else {
-            fail.push('@'+acc.handle);
-          }
-        })
-      );
+      tasks.push(fetchNitter(acc.handle).then(function(items){
+        if(items.length){items.forEach(function(i){raw.push(i);});ok.push('@'+acc.handle+'('+items.length+')');}
+        else fail.push('@'+acc.handle);
+      }));
     });
   }
 
   await Promise.allSettled(tasks);
 
   document.getElementById('source-status').innerHTML=
-    (ok.length  ?'<span style="color:var(--green)">✓ '+ok.join(', ')+'</span><br>':'')+
-    (fail.length?'<span style="color:var(--text3)">✗ '+fail.join(', ')+'</span>':'');
+    (ok.length  ?'<span style="color:var(--green)">✓ '+ok.join(' ')+'</span><br>':'')+
+    (fail.length?'<span style="color:var(--text3)">✗ '+fail.join(' ')+'</span>':'');
 
   return raw;
 }
 
-// ── Claude ────────────────────────────────────────────────────────────────────
-var SF_SYS='You are an automotive and tech intelligence analyst. Curate, deduplicate and score the raw RSS/social items provided. Return ONLY a valid JSON object with:\n1. "briefing": 2-3 sentence morning summary of the most important themes (plain text)\n2. "items": array of 12-20 curated news items\n\nEach item MUST include:\n{ id (unique string), headline (≤12 words, punchy present tense), summary (2-3 sentences with specific facts/specs/prices where available), brand (primary brand or null), category ("china"|"ev"|"tech"|"press"|"social"|"charging"), source (short key e.g. "google_en","google_cn","reddit","electrek","cnevpost","x"), sourceLabel (readable e.g. "Google News","Electrek","X/Twitter","Reddit"), sentiment ("bullish"|"neutral"|"bearish"), importance (1-5, 5=breaking), region ("China"|"Global"|"US"|"Europe"), timestamp (ISO string today), url (original article/tweet URL — MUST include if available in source data, else null), tags (3-5 lowercase strings) }\n\nCRITICAL: Always copy the url/link from the source data into the "url" field. For X/Twitter items, include the tweet link. Prioritise China EV, Tesla, AI/autonomous driving, major brand news, charging infrastructure (megawatt charging, NACS, CCS, charging networks, Supercharger, battery swapping). Use category "charging" for anything about charging infrastructure, charger tech, charging networks, battery swap stations. Return ONLY JSON, no markdown.';
+// ── Claude system prompt ──────────────────────────────────────────────────────
+var SYS='You are an automotive and tech intelligence analyst. Curate, deduplicate and score raw RSS/social items. Return ONLY valid JSON with two keys:\n'
+  +'"briefing": 2-3 sentence morning summary of the biggest themes today (plain text, no markdown)\n'
+  +'"items": array of 14-22 curated news items\n\n'
+  +'Each item MUST have ALL these fields:\n'
+  +'{ "id": unique string, "headline": punchy ≤12-word present-tense headline, "summary": 2-3 sentences with specific facts/model names/specs/prices, "brand": primary brand name or null, "category": one of "china"|"ev"|"tech"|"charging"|"press"|"social", "source": short source key, "sourceLabel": readable source name e.g. "Electrek" "X/Twitter" "Google News" "Reddit" "CnEVPost", "sentiment": "bullish"|"neutral"|"bearish", "importance": integer 1-5 where 5=breaking major news, "region": "China"|"Global"|"US"|"Europe", "timestamp": ISO8601 string for today, "url": ORIGINAL article or tweet URL copied exactly from source data — this is CRITICAL, never null if a link was provided, "tags": array of 3-5 lowercase keyword strings }\n\n'
+  +'Rules: Use category "charging" for anything about charging infrastructure, MW chargers, NACS/CCS standards, charging networks, battery swap. Prioritise China EV launches, Tesla, AI/autonomous driving, charging tech, major brand announcements. Add 2-3 knowledge-based items if feeds are thin. Return ONLY the JSON object — no markdown fences, no explanation.';
 
+// ── Main fetch ────────────────────────────────────────────────────────────────
 async function sfFetch(){
   var btn=document.getElementById('refresh-btn');
-  var icon=document.getElementById('refresh-icon');
-  var lbl=document.getElementById('refresh-label');
+  var icon=document.getElementById('refresh-icon'),lbl=document.getElementById('refresh-label');
   btn.disabled=true; icon.className='spinning'; lbl.textContent='Scanning…';
   document.getElementById('progress-bar-wrap').style.display='block';
   document.getElementById('error-msg').style.display='none';
@@ -584,53 +634,58 @@ async function sfFetch(){
 
   sfProgress(5,'Connecting to sources…');
   var raw=[];
-  try{raw=await sfGatherFeeds();}catch(e){console.warn(e);}
-  sfProgress(62,'Gathered '+raw.length+' items — curating with Claude…');
+  try{raw=await sfGatherFeeds();}catch(e){console.warn('Feed gather error',e);}
+  sfProgress(62,'Got '+raw.length+' items — curating with Claude…');
 
   var today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  var kwNote=SF.keywords.length?'\nFlag items matching these keywords with importance boost: '+SF.keywords.join(', '):'';
-  var accNote=SF.accounts.length?'\nX accounts being tracked: '+SF.accounts.map(function(a){return'@'+a.handle;}).join(', '):'';
+  var kwNote=SF.keywords.length?'\nBoost importance for items matching: '+SF.keywords.join(', '):'';
+  var accNote=SF.accounts.length?'\nX accounts tracked: '+SF.accounts.map(function(a){return'@'+a.handle;}).join(', '):'';
 
   var userPrompt='Today is '+today+'.'+kwNote+accNote+'\n\n'
     +(raw.length
-      ?'Here are '+raw.length+' raw items. Curate and return as JSON. IMPORTANT: copy the link/url field into each item\'s url field:\n\n'
+      ?"Here are "+raw.length+" raw feed items. IMPORTANT: copy each item's link into the url field:\n\n"
         +raw.slice(0,80).map(function(r,i){
-          return '['+(i+1)+'] SRC:'+r._src+(r._xhandle?' ACCOUNT:'+r._xhandle:'')+' | '+r.source
+          return'['+(i+1)+'] SRC:'+r._src+(r._xhandle?' HANDLE:'+r._xhandle:'')+' | OUTLET:'+r.source
             +'\nTITLE: '+r.title
-            +'\nLINK: '+(r.link||'')
+            +'\nLINK: '+(r.link||'(none)')
             +'\nDESC: '+r.desc
             +'\nDATE: '+r.pubDate;
         }).join('\n---\n')
-      :'No RSS items loaded (proxy issue). Generate today\'s automotive intelligence from your own knowledge — focus on China EV, Tesla, AI/autonomous driving, major brand news from this week.');
+      :'No RSS feeds loaded. Generate today\'s automotive intelligence from your knowledge — China EV, Tesla, charging tech, AI/autonomous, brand news from this week.');
 
   try{
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5000,system:SF_SYS,messages:[{role:'user',content:userPrompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:6000,system:SYS,messages:[{role:'user',content:userPrompt}]})
     });
     sfProgress(90,'Rendering signals…');
     var data=await resp.json();
-    if(data.error) throw new Error(data.error.message);
+    if(data.error)throw new Error(data.error.message);
     var text=(data.content||[]).map(function(c){return c.type==='text'?c.text:'';}).join('\n');
     var clean=text.replace(/```json|```/g,'').trim();
-    var match=clean.match(/\{[\s\S]*\}/);
-    if(!match) throw new Error('Unexpected response format: '+clean.slice(0,200));
-    var parsed=JSON.parse(match[0]);
+    var m=clean.match(/\{[\s\S]*\}/);
+    if(!m)throw new Error('Unexpected Claude response: '+clean.slice(0,200));
+    var parsed=JSON.parse(m[0]);
     SF.news=Array.isArray(parsed)?parsed:(parsed.items||[]);
+
     if(parsed.briefing){
       document.getElementById('briefing-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
       document.getElementById('briefing-text').textContent=parsed.briefing;
       document.getElementById('briefing-card').classList.add('visible');
     }
+
     sfProgress(100,SF.news.length+' signals loaded');
     document.getElementById('last-update').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     sfRender();
     setTimeout(function(){document.getElementById('progress-bar-wrap').style.display='none';},2000);
+
   }catch(e){
     var err=document.getElementById('error-msg');
     err.style.display='block';
-    err.innerHTML='<strong>Error:</strong> '+e.message+'<br><br><strong>Try clicking Refresh again</strong> — it automatically tries multiple proxy servers. If it keeps failing, signals will load from Claude\'s built-in knowledge.';
+    err.innerHTML='<strong>Error loading signals:</strong> '+e.message
+      +'<br><br>Make sure the <code>api/proxy.js</code> file is deployed alongside <code>index.html</code> on Vercel. '
+      +'Both files must be in the same GitHub repo.';
     document.getElementById('progress-bar-wrap').style.display='none';
   }
   btn.disabled=false; icon.className=''; icon.textContent='↺'; lbl.textContent='Refresh';
@@ -638,13 +693,12 @@ async function sfFetch(){
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 sfLoad();
-sfBuildBrands();
-sfBuildSources();
-sfBuildKeywords();
-sfBuildAccounts();
+sfBuildBrands();sfBuildSources();sfBuildKeywords();sfBuildAccounts();
 document.getElementById('importance-range').value=SF.minImportance;
 document.getElementById('importance-val').textContent=SF.minImportance+'+';
+document.getElementById('refresh-interval').value=SF.refreshInterval;
 document.querySelectorAll('.nav-item').forEach(function(n){n.classList.toggle('active',n.dataset.cat===SF.cat);});
+sfScheduleNext();
 sfRender();
 sfFetch();
 </script>
