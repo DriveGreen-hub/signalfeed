@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SignalFeed — Auto & Tech Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #161616;
+    --border: #1e1e1e;
+    --border2: #282828;
+    --text: #e8e8e0;
+    --text2: #888880;
+    --text3: #444440;
+    --accent: #c8f060;
+    --accent2: #8ab840;
+    --red: #ff4444;
+    --orange: #ff9900;
+    --green: #44cc88;
+    --blue: #4488ff;
+    --china: #e6162d;
+    --font-head: 'Syne', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  html { font-size: 14px; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* Layout */
+  #app { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
+
+  /* Topbar */
+  #topbar {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky; top: 0; z-index: 200;
+    padding: 0 24px;
+    display: flex; align-items: stretch; justify-content: space-between;
+    height: 56px;
+  }
+  #topbar-left { display: flex; align-items: center; gap: 20px; }
+  #logo { font-family: var(--font-head); font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); text-decoration: none; }
+  #logo span { color: var(--accent); }
+  #topbar-right { display: flex; align-items: center; gap: 12px; }
+  #last-update { font-size: 11px; color: var(--text3); font-family: var(--font-head); letter-spacing: 0.04em; }
+
+  /* Main layout */
+  #main { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 56px); }
+
+  /* Sidebar */
+  #sidebar {
+    border-right: 1px solid var(--border);
+    padding: 20px 16px;
+    position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
+    display: flex; flex-direction: column; gap: 28px;
+    background: var(--bg);
+  }
+
+  .sidebar-section-title {
+    font-size: 9px; font-family: var(--font-head); letter-spacing: 0.15em;
+    color: var(--text3); text-transform: uppercase; margin-bottom: 10px;
+  }
+
+  /* Stats */
+  #stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+  .stat-num { font-size: 22px; font-family: var(--font-head); font-weight: 700; line-height: 1; margin-bottom: 3px; }
+  .stat-label { font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
+
+  /* Nav */
+  .nav-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 10px; border-radius: var(--radius); cursor: pointer;
+    font-size: 12px; font-family: var(--font-head); font-weight: 500;
+    color: var(--text2); transition: all 0.15s; border: 1px solid transparent;
+    user-select: none;
+  }
+  .nav-item:hover { background: var(--bg2); color: var(--text); }
+  .nav-item.active { background: var(--bg3); color: var(--accent); border-color: var(--border); }
+  .nav-item .nav-icon { font-size: 14px; margin-right: 8px; opacity: 0.7; }
+  .nav-count { font-size: 10px; color: var(--text3); font-weight: 400; }
+  .nav-item.active .nav-count { color: var(--accent2); }
+
+  /* Brand tags */
+  #brand-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .brand-tag {
+    font-size: 10px; font-family: var(--font-head); padding: 3px 8px;
+    border: 1px solid var(--border); border-radius: 3px; cursor: pointer;
+    color: var(--text3); transition: all 0.15s; background: none;
+  }
+  .brand-tag:hover { color: var(--text); border-color: var(--border2); }
+  .brand-tag.active { color: var(--accent); border-color: var(--accent2); background: #c8f06010; }
+
+  /* Keywords */
+  #keyword-list { display: flex; flex-direction: column; gap: 5px; }
+  .keyword-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 5px 8px; font-size: 11px; color: var(--text2);
+  }
+  .keyword-item button { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 2px; }
+  .keyword-item button:hover { color: var(--red); }
+  #keyword-input-row { display: flex; gap: 5px; margin-top: 5px; }
+  #keyword-input-row input { flex: 1; min-width: 0; }
+  #keyword-input-row button { flex-shrink: 0; font-size: 11px; padding: 5px 10px; white-space: nowrap; }
+
+  /* Sources toggle */
+  #source-list { display: flex; flex-direction: column; gap: 5px; }
+  .source-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 5px 8px; border-radius: var(--radius); background: var(--bg2);
+    border: 1px solid var(--border); font-size: 11px;
+  }
+  .source-dot { width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; flex-shrink: 0; }
+  .source-label { color: var(--text2); display: flex; align-items: center; }
+  .toggle { position: relative; width: 28px; height: 16px; cursor: pointer; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0; background: var(--border2); border-radius: 8px; transition: 0.2s;
+  }
+  .toggle-slider::before {
+    content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--text3); bottom: 3px; left: 3px; transition: 0.2s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--accent2); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(12px); background: var(--bg); }
+
+  /* Importance filter */
+  #importance-wrap { display: flex; align-items: center; gap: 10px; }
+  #importance-wrap input[type=range] { flex: 1; accent-color: var(--accent); }
+  #importance-val { font-size: 11px; color: var(--accent); font-family: var(--font-head); min-width: 16px; }
+
+  /* Content */
+  #content { padding: 20px 24px; max-width: 900px; }
+
+  /* Briefing card */
+  #briefing-card {
+    background: linear-gradient(135deg, #141a0e 0%, #0f1a0a 100%);
+    border: 1px solid #2a3820; border-radius: var(--radius-lg);
+    padding: 18px 20px; margin-bottom: 20px; display: none;
+  }
+  #briefing-card.visible { display: block; }
+  #briefing-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  #briefing-date { font-size: 10px; font-family: var(--font-head); color: var(--accent2); letter-spacing: 0.1em; text-transform: uppercase; }
+  #briefing-title { font-size: 13px; font-family: var(--font-head); font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  #briefing-text { font-size: 13px; color: #a8c880; line-height: 1.7; }
+
+  /* Search */
+  #search-bar {
+    display: flex; gap: 8px; margin-bottom: 16px; align-items: center;
+  }
+  #search-input {
+    flex: 1; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text); padding: 8px 14px;
+    font-size: 12px; font-family: var(--font-body); outline: none; transition: border 0.15s;
+  }
+  #search-input:focus { border-color: var(--border2); }
+  #search-input::placeholder { color: var(--text3); }
+  #result-count { font-size: 10px; color: var(--text3); font-family: var(--font-head); letter-spacing: 0.06em; white-space: nowrap; }
+
+  /* Progress */
+  #progress-bar-wrap { margin-bottom: 16px; display: none; }
+  #progress-bar-bg { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+  #progress-bar-fill { height: 100%; background: var(--accent); border-radius: 1px; transition: width 0.6s ease; width: 0%; }
+  #progress-label { font-size: 10px; color: var(--text3); font-family: var(--font-head); letter-spacing: 0.06em; margin-top: 6px; }
+
+  /* News cards */
+  .news-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 14px 16px;
+    margin-bottom: 7px; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    animation: fadeUp 0.35s ease both;
+  }
+  .news-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .news-card.breaking { border-left: 3px solid var(--red); }
+  .news-card.expanded { border-color: var(--border2); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .card-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .card-badge {
+    font-size: 9px; font-family: var(--font-head); font-weight: 600;
+    letter-spacing: 0.08em; padding: 2px 6px; border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .card-brand { font-size: 10px; font-family: var(--font-head); color: var(--text3); letter-spacing: 0.05em; }
+  .card-region { font-size: 10px; color: var(--text3); }
+  .breaking-label {
+    font-size: 9px; font-family: var(--font-head); letter-spacing: 0.1em;
+    color: var(--red); display: flex; align-items: center; gap: 4px;
+  }
+  .breaking-dot { width: 5px; height: 5px; background: var(--red); border-radius: 50%; animation: blink 1.2s ease infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .card-headline {
+    font-size: 13px; font-family: var(--font-serif); color: var(--text);
+    line-height: 1.5; margin-bottom: 8px; font-weight: 400;
+  }
+
+  .card-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .importance-dots { display: flex; gap: 3px; align-items: center; }
+  .imp-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .card-time { font-size: 10px; color: var(--text3); font-family: var(--font-head); }
+  .sentiment-icon { font-size: 12px; }
+
+  .card-expand {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .card-expand.open { display: block; }
+  .card-summary { font-size: 12px; color: var(--text2); line-height: 1.75; margin-bottom: 10px; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .card-tag {
+    font-size: 10px; color: var(--text3); font-family: var(--font-head);
+    padding: 2px 6px; border: 1px solid var(--border); border-radius: 3px;
+  }
+
+  /* Buttons */
+  button, .btn {
+    background: none; border: 1px solid var(--border2); border-radius: var(--radius);
+    color: var(--text2); cursor: pointer; font-family: var(--font-head);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 7px 14px; transition: all 0.15s; display: inline-flex;
+    align-items: center; gap: 6px;
+  }
+  button:hover { border-color: var(--text3); color: var(--text); }
+  button:disabled { opacity: 0.4; cursor: default; }
+  .btn-accent { border-color: var(--accent2); color: var(--accent); }
+  .btn-accent:hover { background: #c8f06015; }
+
+  /* Refresh spin */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
+
+  /* Empty / error */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-label { font-size: 12px; font-family: var(--font-head); letter-spacing: 0.08em; }
+  #error-msg {
+    display: none; background: #1a0000; border: 1px solid #440000;
+    border-radius: var(--radius); padding: 12px 16px;
+    font-size: 12px; color: #ff8888; margin-bottom: 14px;
+    font-family: var(--font-head);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    #main { grid-template-columns: 1fr; }
+    #sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    #content { padding: 14px 16px; }
+    #topbar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Topbar -->
+  <header id="topbar">
+    <div id="topbar-left">
+      <a id="logo" href="#">Signal<span>Feed</span></a>
+      <span id="last-update">—</span>
+    </div>
+    <div id="topbar-right">
+      <button id="refresh-btn" onclick="sfFetch()">
+        <span id="refresh-icon">↺</span>
+        <span id="refresh-label">Refresh</span>
+      </button>
+    </div>
+  </header>
+
+  <div id="main">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+
+      <!-- Stats -->
+      <div>
+        <div class="sidebar-section-title">Today's signals</div>
+        <div id="stats-grid">
+          <div class="stat-card"><div class="stat-num" id="st-total" style="color:var(--text)">—</div><div class="stat-label">total</div></div>
+          <div class="stat-card"><div class="stat-num" id="st-breaking" style="color:var(--red)">—</div><div class="stat-label">breaking</div></div>
+          <div class="stat-card"><div class="stat-num" id="st-china" style="color:var(--china)">—</div><div class="stat-label">china</div></div>
+          <div class="stat-card"><div class="stat-num" id="st-bullish" style="color:var(--green)">—</div><div class="stat-label">bullish</div></div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div>
+        <div class="sidebar-section-title">Channels</div>
+        <nav id="nav-channels">
+          <div class="nav-item active" data-cat="all" onclick="sfSetCat(this,'all')">
+            <span><span class="nav-icon">◈</span>All signals</span>
+            <span class="nav-count" id="nc-all">0</span>
+          </div>
+          <div class="nav-item" data-cat="china" onclick="sfSetCat(this,'china')">
+            <span><span class="nav-icon">⬡</span>China launches</span>
+            <span class="nav-count" id="nc-china">0</span>
+          </div>
+          <div class="nav-item" data-cat="ev" onclick="sfSetCat(this,'ev')">
+            <span><span class="nav-icon">⚡</span>EV & Tesla</span>
+            <span class="nav-count" id="nc-ev">0</span>
+          </div>
+          <div class="nav-item" data-cat="tech" onclick="sfSetCat(this,'tech')">
+            <span><span class="nav-icon">◎</span>Tech & AI</span>
+            <span class="nav-count" id="nc-tech">0</span>
+          </div>
+          <div class="nav-item" data-cat="press" onclick="sfSetCat(this,'press')">
+            <span><span class="nav-icon">◆</span>Press releases</span>
+            <span class="nav-count" id="nc-press">0</span>
+          </div>
+          <div class="nav-item" data-cat="social" onclick="sfSetCat(this,'social')">
+            <span><span class="nav-icon">⊕</span>Social & Reddit</span>
+            <span class="nav-count" id="nc-social">0</span>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Brand watchlist -->
+      <div>
+        <div class="sidebar-section-title">Brand watchlist</div>
+        <div id="brand-tags"></div>
+      </div>
+
+      <!-- Custom keywords -->
+      <div>
+        <div class="sidebar-section-title">Keyword alerts</div>
+        <div id="keyword-list"></div>
+        <div id="keyword-input-row">
+          <input id="kw-input" type="text" placeholder="e.g. solid state..." onkeydown="if(event.key==='Enter')sfAddKeyword()" />
+          <button onclick="sfAddKeyword()" class="btn-accent">+ Add</button>
+        </div>
+      </div>
+
+      <!-- Sources -->
+      <div>
+        <div class="sidebar-section-title">Active sources</div>
+        <div id="source-list"></div>
+      </div>
+
+      <!-- Importance filter -->
+      <div>
+        <div class="sidebar-section-title">Min. importance</div>
+        <div id="importance-wrap">
+          <span style="font-size:10px;color:var(--text3);">1</span>
+          <input type="range" min="1" max="5" value="1" id="importance-range" oninput="sfOnImportance(this.value)" step="1" />
+          <span style="font-size:10px;color:var(--text3);">5</span>
+          <span id="importance-val">1+</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Main content -->
+    <main id="content">
+
+      <!-- Daily briefing -->
+      <div id="briefing-card">
+        <div id="briefing-header">
+          <div style="width:6px;height:6px;background:var(--accent);border-radius:50%;"></div>
+          <div id="briefing-date"></div>
+        </div>
+        <div id="briefing-title">Morning Briefing</div>
+        <div id="briefing-text"></div>
+      </div>
+
+      <!-- Progress -->
+      <div id="progress-bar-wrap">
+        <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
+        <div id="progress-label"></div>
+      </div>
+
+      <!-- Error -->
+      <div id="error-msg"></div>
+
+      <!-- Search -->
+      <div id="search-bar">
+        <input id="search-input" type="text" placeholder="Search headlines, brands, tags…" oninput="sfRender()" />
+        <span id="result-count">— signals</span>
+      </div>
+
+      <!-- Feed -->
+      <div id="feed"></div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let SF = {
+  news: [],
+  cat: 'all',
+  brandFilter: '',
+  minImportance: 1,
+  keywords: [],
+  sources: {
+    google_en: { label: 'Google News (EN)', color: '#EA4335', enabled: true },
+    google_cn: { label: 'Google News (CN)', color: '#e6162d', enabled: true },
+    reddit:    { label: 'Reddit',           color: '#FF6314', enabled: true },
+    electrek:  { label: 'Electrek RSS',     color: '#44cc88', enabled: true },
+    cnevpost:  { label: 'CnEVPost RSS',     color: '#4488ff', enabled: true },
+    press:     { label: 'Brand Newsrooms',  color: '#888',    enabled: true },
+  }
+};
+
+const BRANDS = ['BYD','NIO','Xpeng','Li Auto','Tesla','Zeekr','Huawei','BMW','Mercedes','Volkswagen','Toyota','Xiaomi Auto','Rivian','Lucid'];
+const CORS   = 'https://api.allorigins.win/get?url=';
+
+// ─── Persistence ─────────────────────────────────────────────────────────────
+function sfSave() {
+  try {
+    localStorage.setItem('sf_prefs', JSON.stringify({
+      cat: SF.cat,
+      brandFilter: SF.brandFilter,
+      minImportance: SF.minImportance,
+      keywords: SF.keywords,
+      sources: Object.fromEntries(Object.entries(SF.sources).map(([k,v])=>[k,v.enabled]))
+    }));
+  } catch(e) {}
+}
+
+function sfLoad() {
+  try {
+    const p = JSON.parse(localStorage.getItem('sf_prefs') || '{}');
+    if (p.cat)          SF.cat = p.cat;
+    if (p.brandFilter)  SF.brandFilter = p.brandFilter;
+    if (p.minImportance) SF.minImportance = p.minImportance;
+    if (p.keywords)     SF.keywords = p.keywords;
+    if (p.sources) Object.entries(p.sources).forEach(([k,v])=> { if(SF.sources[k]) SF.sources[k].enabled = v; });
+  } catch(e) {}
+}
+
+// ─── UI builders ─────────────────────────────────────────────────────────────
+function sfBuildBrands() {
+  const el = document.getElementById('brand-tags');
+  el.innerHTML = BRANDS.map(b =>
+    `<span class="brand-tag${SF.brandFilter===b?' active':''}" data-b="${b}" onclick="sfToggleBrand('${b}')">${b}</span>`
+  ).join('');
+}
+
+function sfBuildSources() {
+  const el = document.getElementById('source-list');
+  el.innerHTML = Object.entries(SF.sources).map(([k,s]) => `
+    <div class="source-row">
+      <span class="source-label">
+        <span class="source-dot" style="background:${s.color}"></span>${s.label}
+      </span>
+      <label class="toggle" aria-label="Toggle ${s.label}">
+        <input type="checkbox" ${s.enabled?'checked':''} onchange="sfToggleSource('${k}',this.checked)" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>`).join('');
+}
+
+function sfBuildKeywords() {
+  const el = document.getElementById('keyword-list');
+  el.innerHTML = SF.keywords.length ? SF.keywords.map((kw,i) => `
+    <div class="keyword-item">
+      <span style="color:var(--accent)">⬡</span>&nbsp;${kw}
+      <button onclick="sfRemoveKeyword(${i})" aria-label="Remove keyword">×</button>
+    </div>`).join('') : '<div style="font-size:11px;color:var(--text3);padding:4px 0;">No keywords yet</div>';
+}
+
+function sfBadgeStyle(source) {
+  const colors = {
+    weibo:'#e6162d', xiaohongshu:'#ff2442', x:'#888',
+    press:'#4488ff', web:'#44cc88', reddit:'#FF6314',
+    hn:'#FF6600', google:'#EA4335', electrek:'#44cc88',
+    cnevpost:'#4488ff'
+  };
+  const c = colors[source] || '#888';
+  return `background:${c}20;color:${c};border:1px solid ${c}40;`;
+}
+
+function sfDots(n) {
+  return [1,2,3,4,5].map(i => {
+    const c = i<=n ? (n>=4?'var(--red)':n>=3?'var(--orange)':'var(--green)') : 'var(--border2)';
+    return `<span class="imp-dot" style="background:${c}"></span>`;
+  }).join('');
+}
+
+function sfSentiment(s) {
+  if (s==='bullish') return `<span class="sentiment-icon" style="color:var(--green)" title="Bullish">↑</span>`;
+  if (s==='bearish') return `<span class="sentiment-icon" style="color:var(--red)" title="Bearish">↓</span>`;
+  return `<span class="sentiment-icon" style="color:var(--text3)" title="Neutral">—</span>`;
+}
+
+// ─── Filters ─────────────────────────────────────────────────────────────────
+function sfSetCat(el, cat) {
+  SF.cat = cat;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  sfSave(); sfRender();
+}
+function sfToggleBrand(b) {
+  SF.brandFilter = SF.brandFilter===b?'':b;
+  sfBuildBrands(); sfSave(); sfRender();
+}
+function sfToggleSource(k, v) {
+  SF.sources[k].enabled = v; sfSave();
+}
+function sfOnImportance(v) {
+  SF.minImportance = parseInt(v);
+  document.getElementById('importance-val').textContent = v + '+';
+  sfSave(); sfRender();
+}
+function sfAddKeyword() {
+  const inp = document.getElementById('kw-input');
+  const kw = inp.value.trim();
+  if (kw && !SF.keywords.includes(kw)) { SF.keywords.push(kw); sfBuildKeywords(); sfSave(); sfRender(); }
+  inp.value = '';
+}
+function sfRemoveKeyword(i) {
+  SF.keywords.splice(i,1); sfBuildKeywords(); sfSave(); sfRender();
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+function sfRender() {
+  const q = (document.getElementById('search-input')?.value||'').toLowerCase();
+  const filtered = SF.news.filter(item => {
+    if (SF.cat !== 'all' && item.category !== SF.cat) return false;
+    if (SF.brandFilter && !(item.brand||'').toLowerCase().includes(SF.brandFilter.toLowerCase()) && !(item.headline||'').toLowerCase().includes(SF.brandFilter.toLowerCase())) return false;
+    if ((item.importance||1) < SF.minImportance) return false;
+    if (q && !(item.headline||'').toLowerCase().includes(q) && !(item.brand||'').toLowerCase().includes(q) && !(item.summary||'').toLowerCase().includes(q) && !(item.tags||[]).some(t=>t.toLowerCase().includes(q))) return false;
+    // keyword highlights — always show, but mark
+    return true;
+  }).sort((a,b)=>(b.importance||0)-(a.importance||0));
+
+  // Update counts
+  document.getElementById('st-total').textContent    = SF.news.length;
+  document.getElementById('st-breaking').textContent = SF.news.filter(i=>i.importance>=4).length;
+  document.getElementById('st-china').textContent    = SF.news.filter(i=>i.region==='China').length;
+  document.getElementById('st-bullish').textContent  = SF.news.filter(i=>i.sentiment==='bullish').length;
+  ['all','china','ev','tech','press','social'].forEach(c => {
+    const el = document.getElementById('nc-'+c);
+    if (el) el.textContent = c==='all' ? SF.news.length : SF.news.filter(i=>i.category===c).length;
+  });
+
+  document.getElementById('result-count').textContent = `${filtered.length} signal${filtered.length!==1?'s':''}`;
+
+  const feed = document.getElementById('feed');
+  if (!filtered.length) {
+    feed.innerHTML = `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-label">${SF.news.length?'No signals match this filter':'Hit Refresh to load today\'s intelligence'}</div></div>`;
+    return;
+  }
+
+  feed.innerHTML = filtered.map((item, idx) => {
+    const breaking = item.importance >= 4;
+    const t = item.timestamp ? new Date(item.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
+    const hasKw = SF.keywords.some(kw => (item.headline||'').toLowerCase().includes(kw.toLowerCase()) || (item.summary||'').toLowerCase().includes(kw.toLowerCase()));
+    const tags = (item.tags||[]).slice(0,5).map(t=>`<span class="card-tag">#${t}</span>`).join('');
+    return `<div class="news-card${breaking?' breaking':''}${hasKw?' kw-match':''}" style="animation-delay:${Math.min(idx*0.04,0.5)}s${hasKw?';border-color:#c8f06040':''}" onclick="sfExpandCard(this)">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-badge" style="${sfBadgeStyle(item.source)}">${item.sourceLabel||item.source||'web'}</span>
+          ${item.brand?`<span class="card-brand">${item.brand}</span>`:''}
+          ${breaking?`<span class="breaking-label"><span class="breaking-dot"></span>BREAKING</span>`:''}
+          ${hasKw?`<span class="card-badge" style="background:#c8f06020;color:var(--accent);border-color:var(--accent2)40;">⬡ keyword</span>`:''}
+        </div>
+        <span class="card-region">${item.region||''}</span>
+      </div>
+      <div class="card-headline">${item.headline||''}</div>
+      <div class="card-bottom">
+        <div class="importance-dots">${sfDots(item.importance||2)}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${sfSentiment(item.sentiment)}
+          <span class="card-time">${t}</span>
+        </div>
+      </div>
+      <div class="card-expand">
+        <p class="card-summary">${item.summary||''}</p>
+        <div class="card-tags">${tags}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function sfExpandCard(el) {
+  const exp = el.querySelector('.card-expand');
+  exp.classList.toggle('open');
+  el.classList.toggle('expanded');
+}
+
+// ─── Progress ─────────────────────────────────────────────────────────────────
+function sfProgress(pct, label) {
+  document.getElementById('progress-bar-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = label;
+}
+
+// ─── RSS Fetching ─────────────────────────────────────────────────────────────
+async function sfFetchRSS(url) {
+  const res = await fetch(CORS + encodeURIComponent(url));
+  const json = await res.json();
+  const doc = new DOMParser().parseFromString(json.contents, 'text/xml');
+  return Array.from(doc.querySelectorAll('item')).slice(0,8).map(it => ({
+    title:   it.querySelector('title')?.textContent || '',
+    desc:    (it.querySelector('description')?.textContent||'').replace(/<[^>]+>/g,'').slice(0,250),
+    pubDate: it.querySelector('pubDate')?.textContent || '',
+    source:  it.querySelector('source')?.textContent || '',
+    link:    it.querySelector('link')?.textContent || '',
+  }));
+}
+
+async function sfGatherFeeds() {
+  const raw = [];
+  const tasks = [];
+
+  if (SF.sources.google_en.enabled) {
+    const queries = [
+      'BYD NIO Xpeng Li Auto Zeekr electric car launch 2026',
+      'Tesla new model FSD autonomous 2026',
+      'autonomous driving AI automotive technology 2026',
+      'BMW Mercedes Volkswagen Toyota new car announcement 2026',
+      'electric vehicle EV battery breakthrough 2026',
+    ];
+    queries.forEach(q => {
+      const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en&gl=US&ceid=US:en`;
+      tasks.push(sfFetchRSS(url).then(items => items.forEach(i => raw.push({...i, _src:'google_en'}))).catch(()=>{}));
+    });
+  }
+
+  if (SF.sources.google_cn.enabled) {
+    const queries = [
+      '比亚迪 蔚来 小鹏 新能源汽车 新车发布',
+      '华为 问界 小米汽车 极氪 发布',
+      '中国电动车 自动驾驶',
+    ];
+    queries.forEach(q => {
+      const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=zh-CN&gl=CN&ceid=CN:zh-Hans`;
+      tasks.push(sfFetchRSS(url).then(items => items.forEach(i => raw.push({...i, _src:'google_cn'}))).catch(()=>{}));
+    });
+  }
+
+  if (SF.sources.reddit.enabled) {
+    const subs = ['electricvehicles','teslamotors','cars','chinaEV'];
+    subs.forEach(sub => {
+      const url = `https://www.reddit.com/r/${sub}/hot.json?limit=8`;
+      tasks.push(
+        fetch(CORS + encodeURIComponent(url))
+          .then(r=>r.json())
+          .then(json => {
+            const posts = JSON.parse(json.contents)?.data?.children || [];
+            posts.forEach(p => raw.push({
+              title: p.data.title, desc: p.data.selftext?.slice(0,200)||'',
+              pubDate: new Date(p.data.created_utc*1000).toUTCString(),
+              source: 'r/'+sub, link: 'https://reddit.com'+p.data.permalink, _src:'reddit'
+            }));
+          }).catch(()=>{})
+      );
+    });
+  }
+
+  if (SF.sources.electrek.enabled) {
+    tasks.push(sfFetchRSS('https://electrek.co/feed/').then(items => items.forEach(i=>raw.push({...i,_src:'electrek'}))).catch(()=>{}));
+  }
+
+  if (SF.sources.cnevpost.enabled) {
+    tasks.push(sfFetchRSS('https://cnevpost.com/feed/').then(items => items.forEach(i=>raw.push({...i,_src:'cnevpost'}))).catch(()=>{}));
+  }
+
+  if (SF.sources.press.enabled) {
+    const feeds = [
+      'https://www.bmwgroup.com/en/news.rss',
+      'https://media.mercedes-benz.com/rss',
+    ];
+    feeds.forEach(url => tasks.push(sfFetchRSS(url).then(items=>items.forEach(i=>raw.push({...i,_src:'press'}))).catch(()=>{})));
+  }
+
+  await Promise.allSettled(tasks);
+  return raw;
+}
+
+// ─── Claude analysis ──────────────────────────────────────────────────────────
+const SF_SYS = `You are an automotive and tech intelligence analyst. Given raw RSS/news items, curate, deduplicate and score them. Return ONLY a valid JSON object with two keys:
+1. "briefing": a 2-3 sentence morning briefing summary of the most important themes today (plain text, no markdown)
+2. "items": array of 12-20 curated news items
+
+Each item must have: { id (unique string), headline (≤12 words, punchy, present tense), summary (2-3 sentences with specific facts, model names, specs, prices where available), brand (primary brand or null), category ("china"|"ev"|"tech"|"press"|"social"), source (short key: "google"|"reddit"|"electrek"|"cnevpost"|"press"|"web"), sourceLabel (human readable), sentiment ("bullish"|"neutral"|"bearish"), importance (1-5, 5=major breaking news), region ("China"|"Global"|"US"|"Europe"), timestamp (ISO string for today), tags (3-5 relevant lowercase strings) }
+
+Prioritise: China EV launches, Tesla, AI/autonomous driving, major brand announcements. Add 2-3 high-signal items from your own knowledge if the feeds are thin. Return ONLY the JSON object, no markdown fences, no explanation.`;
+
+// ─── Main fetch ───────────────────────────────────────────────────────────────
+async function sfFetch() {
+  const btn = document.getElementById('refresh-btn');
+  const icon = document.getElementById('refresh-icon');
+  const lbl  = document.getElementById('refresh-label');
+  btn.disabled = true;
+  icon.textContent = '↺'; icon.className = 'spinning';
+  lbl.textContent = 'Scanning…';
+  document.getElementById('progress-bar-wrap').style.display = 'block';
+  document.getElementById('error-msg').style.display = 'none';
+  document.getElementById('briefing-card').classList.remove('visible');
+
+  sfProgress(8, 'Connecting to news feeds…');
+
+  let raw = [];
+  try {
+    raw = await sfGatherFeeds();
+  } catch(e) { console.warn('Feed gather error', e); }
+
+  sfProgress(60, `Gathered ${raw.length} raw items — asking Claude to curate…`);
+
+  const today = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const kwNote = SF.keywords.length ? `\nUser keyword alerts to flag: ${SF.keywords.join(', ')}` : '';
+
+  const userPrompt = `Today is ${today}.${kwNote}
+Here are ${raw.length} raw items from auto/tech/EV/China news feeds. Curate, score and return as JSON:\n\n${
+  raw.slice(0,60).map((r,i)=>`[${i+1}] SOURCE:${r._src} | OUTLET:${r.source}\nTITLE: ${r.title}\nDESC: ${r.desc}\nDATE: ${r.pubDate}`).join('\n---\n')
+}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 5000,
+        system: SF_SYS,
+        messages: [{ role:'user', content: userPrompt }]
+      })
+    });
+    sfProgress(90, 'Rendering intelligence…');
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = (data.content||[]).map(c=>c.type==='text'?c.text:'').join('\n');
+    const clean = text.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
+
+    SF.news = parsed.items || parsed;
+
+    // Briefing
+    if (parsed.briefing) {
+      document.getElementById('briefing-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+      document.getElementById('briefing-text').textContent = parsed.briefing;
+      document.getElementById('briefing-card').classList.add('visible');
+    }
+
+    sfProgress(100, `${SF.news.length} signals loaded`);
+    document.getElementById('last-update').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    sfRender();
+    setTimeout(()=>{ document.getElementById('progress-bar-wrap').style.display='none'; }, 1800);
+
+  } catch(e) {
+    const err = document.getElementById('error-msg');
+    err.style.display = 'block';
+    err.textContent = '⚠ ' + e.message + ' — The CORS proxy may be temporarily slow. Try refreshing.';
+    document.getElementById('progress-bar-wrap').style.display = 'none';
+  }
+
+  btn.disabled = false;
+  icon.className = ''; icon.textContent = '↺';
+  lbl.textContent = 'Refresh';
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+sfLoad();
+sfBuildBrands();
+sfBuildSources();
+sfBuildKeywords();
+document.getElementById('importance-range').value = SF.minImportance;
+document.getElementById('importance-val').textContent = SF.minImportance + '+';
+// restore active cat tab
+document.querySelectorAll('.nav-item').forEach(n=>{
+  n.classList.toggle('active', n.dataset.cat === SF.cat);
+});
+sfRender();
+sfFetch();
+</script>
+</body>
+</html>
