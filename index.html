@@ -248,7 +248,7 @@ button:disabled{opacity:.4;cursor:default}
     <main id="content">
       <div id="briefing-card">
         <div id="briefing-date"></div>
-        <div id="briefing-title">Morning Briefing</div>
+        <div id="briefing-title">Morning Briefing <span style="font-size:10px;font-weight:400;color:var(--accent2);letter-spacing:0.08em;margin-left:6px">· last 24h</span></div>
         <div id="briefing-text"></div>
       </div>
       <div id="progress-bar-wrap">
@@ -460,6 +460,18 @@ function sfAddAccount(){
 }
 function sfRemoveAccount(i){SF.accounts.splice(i,1);sfBuildAccounts();sfSave();}
 
+// ── Time ago
+function sfTimeAgo(ts){
+  if(!ts) return '';
+  var d=new Date(ts),diff=Date.now()-d.getTime();
+  if(isNaN(diff)) return '';
+  var m=Math.floor(diff/60000);
+  if(m<1) return 'just now';
+  if(m<60) return m+'m ago';
+  var h=Math.floor(m/60);
+  if(h<24) return h+'h ago';
+  return Math.floor(h/24)+'d ago';
+}
 // ── Render ────────────────────────────────────────────────────────────────────
 function sfRender(){
   var q=(document.getElementById('search-input')?.value||'').toLowerCase();
@@ -521,7 +533,7 @@ function sfRender(){
       +'<div class="card-headline">'+headlineHtml+'</div>'
       +'<div class="card-bottom"><div class="imp-dots">'+sfDots(item.importance||2)+'</div>'
       +'<div style="display:flex;align-items:center;gap:8px">'+sfSenti(item.sentiment)
-      +'<span class="card-time">'+t+'</span></div></div>'
+      +'<span class="card-time">'+sfTimeAgo(item.timestamp)+'</span></div></div>'
       +'<div class="card-expand"><p class="card-summary">'+(item.summary||'')+'</p>'
       +'<div class="card-footer"><div class="card-tags">'+tags+'</div>'+srcLinkHtml+'</div>'
       +'</div></div>';
@@ -620,7 +632,7 @@ var SYS='You are an automotive and tech intelligence analyst. Curate, deduplicat
   +'"items": array of 12-16 curated news items\n\n'
   +'Each item MUST have ALL these fields:\n'
   +'{ "id": unique string, "headline": punchy ≤12-word present-tense headline, "summary": 2-3 sentences with specific facts/model names/specs/prices, "brand": primary brand name or null, "category": one of "china"|"ev"|"tech"|"charging"|"press"|"social", "source": short source key, "sourceLabel": readable source name e.g. "Electrek" "X/Twitter" "Google News" "Reddit" "CnEVPost", "sentiment": "bullish"|"neutral"|"bearish", "importance": integer 1-5 where 5=breaking major news, "region": "China"|"Global"|"US"|"Europe", "timestamp": ISO8601 string for today, "url": ORIGINAL article or tweet URL copied exactly from source data — this is CRITICAL, never null if a link was provided, "tags": array of 3-5 lowercase keyword strings }\n\n'
-  +'Rules: Use category "charging" for anything about charging infrastructure, MW chargers, NACS/CCS standards, charging networks, battery swap. Prioritise China EV launches, Tesla, AI/autonomous driving, charging tech, major brand announcements. Add 2-3 knowledge-based items if feeds are thin. Return ONLY the JSON object — no markdown fences, no explanation.';
+  +'Rules: RECENCY IS CRITICAL — only include news from the last 24 hours. Discard anything older. Knowledge-based items must also be from the last 24h only — no evergreen or old content. Use category "charging" for anything about charging infrastructure, MW chargers, NACS/CCS standards, charging networks, battery swap. Prioritise China EV launches, Tesla, AI/autonomous driving, charging tech, major brand announcements. Add 2-3 knowledge-based items if feeds are thin. Return ONLY the JSON object — no markdown fences, no explanation.';
 
 // ── Main fetch ────────────────────────────────────────────────────────────────
 async function sfFetch(){
@@ -635,7 +647,16 @@ async function sfFetch(){
   sfProgress(5,'Connecting to sources…');
   var raw=[];
   try{raw=await sfGatherFeeds();}catch(e){console.warn('Feed gather error',e);}
-  sfProgress(62,'Got '+raw.length+' items — curating with Claude…');
+  // Filter to last 24 hours only
+  var cutoff = Date.now() - 24*60*60*1000;
+  var rawRecent = raw.filter(function(r){
+    if(!r.pubDate) return true;
+    var d = new Date(r.pubDate);
+    return isNaN(d.getTime()) || d.getTime() > cutoff;
+  });
+  if(rawRecent.length < 5) rawRecent = raw; // fallback if filter too aggressive
+  raw = rawRecent;
+  sfProgress(62,'Got '+raw.length+' recent items — curating with Claude…');
 
   var today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   var kwNote=SF.keywords.length?'\nBoost importance for items matching: '+SF.keywords.join(', '):'';
