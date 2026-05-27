@@ -852,7 +852,7 @@ async function sfFetch(){
     err.innerHTML='<strong>Error:</strong> '+e.message
       +'<br><strong>Proxy status:</strong> '+proxyStatus
       +'<br><br>The dashboard will retry with public fallback proxies on next refresh. '
-      +'If the Vercel proxy shows FAIL, check that <code>api/proxy.js</code> is in your GitHub repo root's <code>api/</code> folder and Vercel has redeployed.';
+      +'If the Vercel proxy shows FAIL, check that api/proxy.js is in your GitHub repo api/ folder and Vercel has redeployed.';
     document.getElementById('progress-bar-wrap').style.display='none';
   }
   btn.disabled=false; icon.className=''; icon.textContent=''; lbl.textContent='Refresh';
