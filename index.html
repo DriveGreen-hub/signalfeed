@@ -323,26 +323,71 @@ function parseRSS(xml,srcKey){
     var doc=new DOMParser().parseFromString(xml,'text/xml');
     if(doc.querySelector('parsererror')) return [];
     return Array.from(doc.querySelectorAll('item')).slice(0,8).map(function(it){
-      // grab link — try several elements
-      var link=''
-        ||it.querySelector('link')?.textContent?.trim()
-        ||it.querySelector('guid')?.textContent?.trim()
-        ||'';
-      // unwrap Google News redirect URL
-      if(link.includes('news.google.com')){
-        var m=link.match(/url=([^&]+)/);
-        if(m)try{link=decodeURIComponent(m[1]);}catch(e){}
+
+      // ── Extract the best URL from RSS item ────────────────────────────────
+      function extractLink(){
+        // 1. <link> — in RSS 2.0 this is a text node sibling, not a child
+        //    DOMParser puts it as element; grab textContent carefully
+        var linkEl = it.querySelector('link');
+        var linkText = '';
+        if(linkEl){
+          // Some parsers give it as text node, some as element text
+          linkText = linkEl.textContent || linkEl.getAttribute('href') || '';
+          linkText = linkText.trim();
+        }
+
+        // 2. <atom:link> with rel="alternate"
+        var atomLink = it.querySelector('link[rel="alternate"]');
+        if(atomLink) linkText = atomLink.getAttribute('href') || linkText;
+
+        // 3. <guid isPermaLink="true">
+        var guid = it.querySelector('guid');
+        if(guid && (!linkText || linkText.includes('news.google.com'))){
+          var isPerma = guid.getAttribute('isPermaLink');
+          if(isPerma !== 'false') linkText = guid.textContent.trim() || linkText;
+        }
+
+        // 4. Unwrap Google News redirect — two formats:
+        //    ?url=https%3A%2F%2F...
+        //    articles/CBMi... (base64 encoded, skip — not decodable client side)
+        if(linkText.includes('news.google.com')){
+          var m = linkText.match(/[?&]url=([^&]+)/);
+          if(m){ try{ linkText = decodeURIComponent(m[1]); }catch(e){} }
+          else {
+            // Try to get real URL from <source url="..."> attribute
+            var srcEl = it.querySelector('source');
+            if(srcEl && srcEl.getAttribute('url')) linkText = srcEl.getAttribute('url');
+          }
+        }
+
+        // 5. Fallback — look inside <description> for first href
+        if(!linkText || linkText.includes('news.google.com')){
+          var desc = it.querySelector('description')?.textContent || '';
+          var hrefM = desc.match(/href=["']([^"']+)["']/);
+          if(hrefM) linkText = hrefM[1];
+        }
+
+        return linkText || '';
       }
+
+      var link = extractLink();
+
+      var rawDesc = it.querySelector('description')?.textContent || '';
+      var desc = rawDesc.replace(/<[^>]+>/g,'')
+        .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+        .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
+        .trim().slice(0,350);
+
       return{
-        title:  it.querySelector('title')?.textContent||'',
-        desc:   (it.querySelector('description')?.textContent||'').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').slice(0,350),
-        pubDate:it.querySelector('pubDate')?.textContent||'',
-        source: it.querySelector('source')?.textContent||srcKey,
-        link:   link,
-        _src:   srcKey
+        title:   it.querySelector('title')?.textContent?.replace(/<[^>]+>/g,'').trim()||'',
+        desc:    desc,
+        pubDate: it.querySelector('pubDate')?.textContent||it.querySelector('published')?.textContent||'',
+        source:  it.querySelector('source')?.textContent||srcKey,
+        link:    link,
+        _src:    srcKey
       };
-    });
-  }catch(e){return [];}
+    }).filter(function(i){ return i.title.length > 0; });
+  }catch(e){ console.warn('RSS parse error',e); return []; }
 }
 
 // ── Persistence ───────────────────────────────────────────────────────────────
