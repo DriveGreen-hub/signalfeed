@@ -1,22 +1,35 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+export const config = { runtime: 'edge' };
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
+export default async function handler(req) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 
-  const { url } = req.query;
-  if (!url) return res.status(400).json({ error: 'Missing url parameter' });
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const url = searchParams.get('url');
+
+  if (!url) {
+    return new Response(JSON.stringify({ error: 'Missing url parameter' }), {
+      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
 
   let targetUrl;
   try {
     targetUrl = decodeURIComponent(url);
-    new URL(targetUrl); // validate
+    new URL(targetUrl);
   } catch (e) {
-    return res.status(400).json({ error: 'Invalid URL: ' + url });
+    return new Response(JSON.stringify({ error: 'Invalid URL' }), {
+      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 
-  // Allowed domains — RSS sources + Nitter instances
   const ALLOWED = [
     'news.google.com',
     'electrek.co',
@@ -37,7 +50,11 @@ export default async function handler(req, res) {
 
   const host = new URL(targetUrl).hostname;
   const allowed = ALLOWED.some(d => host === d || host.endsWith('.' + d));
-  if (!allowed) return res.status(403).json({ error: 'Domain not allowed: ' + host });
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: 'Domain not allowed: ' + host }), {
+      status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
 
   try {
     const response = await fetch(targetUrl, {
@@ -52,11 +69,18 @@ export default async function handler(req, res) {
     const contentType = response.headers.get('content-type') || 'text/plain';
     const text = await response.text();
 
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
-    return res.status(200).send(text);
+    return new Response(text, {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': contentType,
+        'Cache-Control': 's-maxage=300, stale-while-revalidate=600',
+      }
+    });
 
   } catch (e) {
-    return res.status(500).json({ error: 'Fetch failed: ' + e.message });
+    return new Response(JSON.stringify({ error: 'Fetch failed: ' + e.message }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 }
