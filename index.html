@@ -163,6 +163,7 @@ button:disabled{opacity:.4;cursor:default}
       <span id="next-refresh"></span>
     </div>
     <div id="topbar-right">
+      <span id="proxy-pill" style="font-size:10px;font-family:var(--font-head);padding:4px 8px;border-radius:3px;border:1px solid var(--border);color:var(--text3);display:none"></span>
       <select id="refresh-interval" onchange="sfSetInterval(this.value)" title="Auto-refresh interval">
         <option value="0">Manual only</option>
         <option value="60" selected>Every 1h</option>
@@ -266,14 +267,14 @@ button:disabled{opacity:.4;cursor:default}
 </div>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────────
+// -- Config --------------------------------------------------------------------
 var DEFAULT_ACCOUNTS=[
   {handle:'tphuang',       name:'Tim Huang (China EV)'},
   {handle:'thinkercar',    name:'Thinker Car'},
   {handle:'electricfelix', name:'Felix (EV analyst)'},
   {handle:'niccruzpatane', name:'Nic Cruz Patane'},
   {handle:'SawyerMerritt', name:'Sawyer Merritt (Tesla)'},
-  {handle:'XuFei_Xiaomi',  name:'Xu Fei — Xiaomi Auto'},
+  {handle:'XuFei_Xiaomi',  name:'Xu Fei  Xiaomi Auto'},
   {handle:'Alejandroperez',name:'Alejandro Perez'},
   {handle:'CnEVPost',      name:'CnEVPost'},
   {handle:'kimmonismus',   name:'Kim Monismus'},
@@ -292,7 +293,7 @@ var NITTER=[
   'https://nitter.1d4.us',
 ];
 
-// ── State ─────────────────────────────────────────────────────────────────────
+// -- State ---------------------------------------------------------------------
 var SF={
   news:[],cat:'all',brandFilter:'',minImportance:1,keywords:[],
   accounts:JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS)),
@@ -308,25 +309,77 @@ var SF={
 };
 var _refreshTimer=null;
 
-// ── Proxy — uses our own Vercel serverless function ───────────────────────────
-async function fetchProxy(url){
-  // /api/proxy?url=<encoded> — runs server-side on Vercel, no CORS issues
-  var endpoint='/api/proxy?url='+encodeURIComponent(url);
-  var r=await fetch(endpoint,{signal:AbortSignal.timeout(12000)});
-  if(!r.ok) throw new Error('Proxy returned '+r.status+' for '+url);
-  return await r.text();
+// -- Proxy  uses our own Vercel serverless function ---------------------------
+// Test if our Vercel proxy is working, cache result
+var _proxyOk = null;
+async function testProxy(){
+  if(_proxyOk !== null) return _proxyOk;
+  try{
+    var test = await fetch('/api/proxy?url='+encodeURIComponent('https://electrek.co/feed/'),
+      {signal: AbortSignal.timeout(8000)});
+    _proxyOk = test.ok;
+  }catch(e){ _proxyOk = false; }
+  console.log('Vercel proxy available:', _proxyOk);
+  // Show status pill
+  var pill = document.getElementById('proxy-pill');
+  if(pill){
+    pill.style.display = 'inline';
+    if(_proxyOk){
+      pill.textContent = 'proxy ok';
+      pill.style.color = 'var(--green)';
+      pill.style.borderColor = '#1d9e7540';
+    } else {
+      pill.textContent = 'proxy fallback';
+      pill.style.color = 'var(--orange)';
+      pill.style.borderColor = '#ff990040';
+    }
+  }
+  return _proxyOk;
 }
 
-// ── RSS parser ────────────────────────────────────────────────────────────────
+// Public CORS proxies as fallback
+var PUBLIC_PROXIES = [
+  function(u){ return 'https://corsproxy.io/?'+encodeURIComponent(u); },
+  function(u){ return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u); },
+  function(u){ return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u); },
+];
+
+async function fetchProxy(url){
+  var proxyOk = await testProxy();
+
+  // Try our Vercel proxy first
+  if(proxyOk){
+    try{
+      var endpoint = '/api/proxy?url='+encodeURIComponent(url);
+      var r = await fetch(endpoint, {signal: AbortSignal.timeout(12000)});
+      if(r.ok) return await r.text();
+    }catch(e){ console.warn('Vercel proxy failed, trying public proxies'); }
+  }
+
+  // Fall back to public CORS proxies
+  for(var i=0; i<PUBLIC_PROXIES.length; i++){
+    try{
+      var r2 = await fetch(PUBLIC_PROXIES[i](url), {signal: AbortSignal.timeout(8000)});
+      if(r2.ok){
+        var t = await r2.text();
+        if(t && t.length > 100) return t;
+      }
+    }catch(e){ /* try next */ }
+  }
+
+  throw new Error('All proxies failed for: '+url.split('/').slice(0,4).join('/'));
+}
+
+// -- RSS parser ----------------------------------------------------------------
 function parseRSS(xml,srcKey){
   try{
     var doc=new DOMParser().parseFromString(xml,'text/xml');
     if(doc.querySelector('parsererror')) return [];
     return Array.from(doc.querySelectorAll('item')).slice(0,8).map(function(it){
 
-      // ── Extract the best URL from RSS item ────────────────────────────────
+      // -- Extract the best URL from RSS item --------------------------------
       function extractLink(){
-        // 1. <link> — in RSS 2.0 this is a text node sibling, not a child
+        // 1. <link>  in RSS 2.0 this is a text node sibling, not a child
         //    DOMParser puts it as element; grab textContent carefully
         var linkEl = it.querySelector('link');
         var linkText = '';
@@ -347,9 +400,9 @@ function parseRSS(xml,srcKey){
           if(isPerma !== 'false') linkText = guid.textContent.trim() || linkText;
         }
 
-        // 4. Unwrap Google News redirect — two formats:
+        // 4. Unwrap Google News redirect  two formats:
         //    ?url=https%3A%2F%2F...
-        //    articles/CBMi... (base64 encoded, skip — not decodable client side)
+        //    articles/CBMi... (base64 encoded, skip  not decodable client side)
         if(linkText.includes('news.google.com')){
           var m = linkText.match(/[?&]url=([^&]+)/);
           if(m){ try{ linkText = decodeURIComponent(m[1]); }catch(e){} }
@@ -360,7 +413,7 @@ function parseRSS(xml,srcKey){
           }
         }
 
-        // 5. Fallback — look inside <description> for first href
+        // 5. Fallback  look inside <description> for first href
         if(!linkText || linkText.includes('news.google.com')){
           var desc = it.querySelector('description')?.textContent || '';
           var hrefM = desc.match(/href=["']([^"']+)["']/);
@@ -390,7 +443,7 @@ function parseRSS(xml,srcKey){
   }catch(e){ console.warn('RSS parse error',e); return []; }
 }
 
-// ── Persistence ───────────────────────────────────────────────────────────────
+// -- Persistence ---------------------------------------------------------------
 function sfSave(){
   try{localStorage.setItem('sf_prefs',JSON.stringify({
     cat:SF.cat,brandFilter:SF.brandFilter,minImportance:SF.minImportance,
@@ -411,7 +464,7 @@ function sfLoad(){
   }catch(e){}
 }
 
-// ── Auto-refresh timer ────────────────────────────────────────────────────────
+// -- Auto-refresh timer --------------------------------------------------------
 function sfSetInterval(val){
   SF.refreshInterval=parseInt(val);
   sfSave();
@@ -427,13 +480,13 @@ function sfScheduleNext(){
   // update countdown every minute
   function updateCountdown(){
     var left=Math.round((due-Date.now())/60000);
-    if(left>0) document.getElementById('next-refresh').textContent='· next in '+left+'m';
+    if(left>0) document.getElementById('next-refresh').textContent=' next in '+left+'m';
   }
   updateCountdown();
   setInterval(updateCountdown,60000);
 }
 
-// ── UI builders ───────────────────────────────────────────────────────────────
+// -- UI builders ---------------------------------------------------------------
 function sfBuildBrands(){
   document.getElementById('brand-tags').innerHTML=BRANDS.map(function(b){
     return'<span class="brand-tag'+(SF.brandFilter===b?' active':'')+'" onclick="sfToggleBrand(\''+b+'\')">'+b+'</span>';
@@ -449,8 +502,8 @@ function sfBuildSources(){
 function sfBuildKeywords(){
   document.getElementById('keyword-list').innerHTML=SF.keywords.length
     ?SF.keywords.map(function(kw,i){
-      return'<div class="list-item"><span><span style="color:var(--accent)">⬡</span>&nbsp;'+kw+'</span>'
-        +'<button onclick="sfRemoveKeyword('+i+')" aria-label="Remove">×</button></div>';
+      return'<div class="list-item"><span><span style="color:var(--accent)">*</span>&nbsp;'+kw+'</span>'
+        +'<button onclick="sfRemoveKeyword('+i+')" aria-label="Remove"></button></div>';
     }).join('')
     :'<div style="font-size:11px;color:var(--text3);padding:4px 0">No keywords yet</div>';
 }
@@ -458,8 +511,8 @@ function sfBuildAccounts(){
   document.getElementById('account-list').innerHTML=SF.accounts.map(function(a,i){
     return'<div class="list-item">'
       +'<span><span class="list-item-handle">@'+a.handle+'</span>'
-      +(a.name&&a.name!==a.handle?'<span style="color:var(--text3);font-size:10px"> · '+a.name+'</span>':'')+'</span>'
-      +'<button onclick="sfRemoveAccount('+i+')" aria-label="Remove">×</button>'
+      +(a.name&&a.name!==a.handle?'<span style="color:var(--text3);font-size:10px">  '+a.name+'</span>':'')+'</span>'
+      +'<button onclick="sfRemoveAccount('+i+')" aria-label="Remove"></button>'
       +'</div>';
   }).join('')||'<div style="font-size:11px;color:var(--text3);padding:4px 0">No accounts</div>';
 }
@@ -475,12 +528,12 @@ function sfDots(n){
   }).join('');
 }
 function sfSenti(s){
-  return s==='bullish'?'<span style="color:var(--green);font-size:13px" title="Bullish">↑</span>'
-        :s==='bearish'?'<span style="color:var(--red);font-size:13px"   title="Bearish">↓</span>'
-        :'<span style="color:var(--text3);font-size:13px">—</span>';
+  return s==='bullish'?'<span style="color:var(--green);font-size:13px" title="Bullish"></span>'
+        :s==='bearish'?'<span style="color:var(--red);font-size:13px"   title="Bearish"></span>'
+        :'<span style="color:var(--text3);font-size:13px"></span>';
 }
 
-// ── Filters ───────────────────────────────────────────────────────────────────
+// -- Filters -------------------------------------------------------------------
 function sfSetCat(el,cat){
   SF.cat=cat;
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
@@ -505,7 +558,7 @@ function sfAddAccount(){
 }
 function sfRemoveAccount(i){SF.accounts.splice(i,1);sfBuildAccounts();sfSave();}
 
-// ── Time ago
+// -- Time ago
 function sfTimeAgo(ts){
   if(!ts) return '';
   var d=new Date(ts),diff=Date.now()-d.getTime();
@@ -517,7 +570,7 @@ function sfTimeAgo(ts){
   if(h<24) return h+'h ago';
   return Math.floor(h/24)+'d ago';
 }
-// ── Render ────────────────────────────────────────────────────────────────────
+// -- Render --------------------------------------------------------------------
 function sfRender(){
   var q=(document.getElementById('search-input')?.value||'').toLowerCase();
   var cats=['all','china','ev','tech','charging','press','social'];
@@ -547,7 +600,7 @@ function sfRender(){
 
   var feed=document.getElementById('feed');
   if(!filtered.length){
-    feed.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-label">'
+    feed.innerHTML='<div class="empty-state"><div class="empty-icon"></div><div class="empty-label">'
       +(SF.news.length?'No signals match this filter':'Hit Refresh to load today\'s intelligence')+'</div></div>';
     return;
   }
@@ -564,7 +617,7 @@ function sfRender(){
       ?'<a href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+(item.headline||'')+'</a>'
       :(item.headline||'');
     var srcLinkHtml=url
-      ?'<a class="src-link" href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open source ↗</a>'
+      ?'<a class="src-link" href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open source </a>'
       :'';
     return'<div class="news-card'+(breaking?' breaking':'')+'" '
       +'style="animation-delay:'+Math.min(idx*.04,.5)+'s'+(hasKw?';border-color:#c8f06040':'')+'" '
@@ -573,7 +626,7 @@ function sfRender(){
       +'<span class="card-badge" style="'+sfBadge(item.source)+'">'+(item.sourceLabel||item.source||'web')+'</span>'
       +(item.brand?'<span class="card-brand">'+item.brand+'</span>':'')
       +(breaking?'<span class="breaking-label"><span class="breaking-dot"></span>BREAKING</span>':'')
-      +(hasKw?'<span class="card-badge" style="background:#c8f06020;color:var(--accent);border:1px solid #8ab84040">⬡ alert</span>':'')
+      +(hasKw?'<span class="card-badge" style="background:#c8f06020;color:var(--accent);border:1px solid #8ab84040">* alert</span>':'')
       +'</div><span class="card-region">'+(item.region||'')+'</span></div>'
       +'<div class="card-headline">'+headlineHtml+'</div>'
       +'<div class="card-bottom"><div class="imp-dots">'+sfDots(item.importance||2)+'</div>'
@@ -586,13 +639,13 @@ function sfRender(){
 }
 function sfExpand(el){el.querySelector('.card-expand').classList.toggle('open');}
 
-// ── Progress ──────────────────────────────────────────────────────────────────
+// -- Progress ------------------------------------------------------------------
 function sfProgress(pct,label){
   document.getElementById('progress-bar-fill').style.width=pct+'%';
   document.getElementById('progress-label').textContent=label;
 }
 
-// ── Nitter fetch ──────────────────────────────────────────────────────────────
+// -- Nitter fetch --------------------------------------------------------------
 async function fetchNitter(handle){
   for(var i=0;i<NITTER.length;i++){
     try{
@@ -609,7 +662,7 @@ async function fetchNitter(handle){
   return [];
 }
 
-// ── Feed gathering ────────────────────────────────────────────────────────────
+// -- Feed gathering ------------------------------------------------------------
 async function sfGatherFeeds(){
   var raw=[],ok=[],fail=[],tasks=[];
 
@@ -631,9 +684,9 @@ async function sfGatherFeeds(){
     ].forEach(function(q){addRSS(q[0],'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=en&gl=US&ceid=US:en','google_en');});
   }
   if(SF.sources.google_cn.enabled){
-    [['CN EV','比亚迪 蔚来 小鹏 仰望 新能源汽车 新车 2026'],
-     ['CN Auto','华为 问界 小米汽车 极氪 发布 2026'],
-     ['CN Charge','充电桩 超级充电站 快充 兆瓦充电 2026'],
+    [['CN EV','      2026'],
+     ['CN Auto','     2026'],
+     ['CN Charge','    2026'],
     ].forEach(function(q){addRSS(q[0],'https://news.google.com/rss/search?q='+encodeURIComponent(q[1])+'&hl=zh-CN&gl=CN&ceid=CN:zh-Hans','google_cn');});
   }
   if(SF.sources.electrek.enabled)  addRSS('Electrek','https://electrek.co/feed/','electrek');
@@ -665,31 +718,31 @@ async function sfGatherFeeds(){
   await Promise.allSettled(tasks);
 
   document.getElementById('source-status').innerHTML=
-    (ok.length  ?'<span style="color:var(--green)">✓ '+ok.join(' ')+'</span><br>':'')+
-    (fail.length?'<span style="color:var(--text3)">✗ '+fail.join(' ')+'</span>':'');
+    (ok.length  ?'<span style="color:var(--green)">OK '+ok.join(' ')+'</span><br>':'')+
+    (fail.length?'<span style="color:var(--text3)">FAIL '+fail.join(' ')+'</span>':'');
 
   return raw;
 }
 
-// ── Claude system prompt ──────────────────────────────────────────────────────
+// -- Claude system prompt ------------------------------------------------------
 var SYS='You are an automotive and tech intelligence analyst. Curate, deduplicate and score raw RSS/social items. Return ONLY valid JSON with two keys:\n'
   +'"briefing": 2-3 sentence morning summary of the biggest themes today (plain text, no markdown)\n'
   +'"items": array of 12-16 curated news items\n\n'
   +'Each item MUST have ALL these fields:\n'
-  +'{ "id": unique string, "headline": punchy ≤12-word present-tense headline, "summary": 2-3 sentences with specific facts/model names/specs/prices, "brand": primary brand name or null, "category": one of "china"|"ev"|"tech"|"charging"|"press"|"social", "source": short source key, "sourceLabel": readable source name e.g. "Electrek" "X/Twitter" "Google News" "Reddit" "CnEVPost", "sentiment": "bullish"|"neutral"|"bearish", "importance": integer 1-5 where 5=breaking major news, "region": "China"|"Global"|"US"|"Europe", "timestamp": ISO8601 string for today, "url": ORIGINAL article or tweet URL copied exactly from source data — this is CRITICAL, never null if a link was provided, "tags": array of 3-5 lowercase keyword strings }\n\n'
-  +'Rules: RECENCY IS CRITICAL — only include news from the last 24 hours. Discard anything older. Knowledge-based items must also be from the last 24h only — no evergreen or old content. Use category "charging" for anything about charging infrastructure, MW chargers, NACS/CCS standards, charging networks, battery swap. Prioritise China EV launches, Tesla, AI/autonomous driving, charging tech, major brand announcements. Add 2-3 knowledge-based items if feeds are thin. Return ONLY the JSON object — no markdown fences, no explanation.';
+  +'{ "id": unique string, "headline": punchy 12-word present-tense headline, "summary": 2-3 sentences with specific facts/model names/specs/prices, "brand": primary brand name or null, "category": one of "china"|"ev"|"tech"|"charging"|"press"|"social", "source": short source key, "sourceLabel": readable source name e.g. "Electrek" "X/Twitter" "Google News" "Reddit" "CnEVPost", "sentiment": "bullish"|"neutral"|"bearish", "importance": integer 1-5 where 5=breaking major news, "region": "China"|"Global"|"US"|"Europe", "timestamp": ISO8601 string for today, "url": ORIGINAL article or tweet URL copied exactly from source data  this is CRITICAL, never null if a link was provided, "tags": array of 3-5 lowercase keyword strings }\n\n'
+  +'Rules: RECENCY IS CRITICAL  only include news from the last 24 hours. Discard anything older. Knowledge-based items must also be from the last 24h only  no evergreen or old content. Use category "charging" for anything about charging infrastructure, MW chargers, NACS/CCS standards, charging networks, battery swap. Prioritise China EV launches, Tesla, AI/autonomous driving, charging tech, major brand announcements. Add 2-3 knowledge-based items if feeds are thin. Return ONLY the JSON object  no markdown fences, no explanation.';
 
-// ── Main fetch ────────────────────────────────────────────────────────────────
+// -- Main fetch ----------------------------------------------------------------
 async function sfFetch(){
   var btn=document.getElementById('refresh-btn');
   var icon=document.getElementById('refresh-icon'),lbl=document.getElementById('refresh-label');
-  btn.disabled=true; icon.className='spinning'; lbl.textContent='Scanning…';
+  btn.disabled=true; icon.className='spinning'; lbl.textContent='Scanning';
   document.getElementById('progress-bar-wrap').style.display='block';
   document.getElementById('error-msg').style.display='none';
   document.getElementById('briefing-card').classList.remove('visible');
   document.getElementById('source-status').textContent='';
 
-  sfProgress(5,'Connecting to sources…');
+  sfProgress(5,'Connecting to sources');
   var raw=[];
   try{raw=await sfGatherFeeds();}catch(e){console.warn('Feed gather error',e);}
   // Filter to last 24 hours only
@@ -701,7 +754,7 @@ async function sfFetch(){
   });
   if(rawRecent.length < 5) rawRecent = raw; // fallback if filter too aggressive
   raw = rawRecent;
-  sfProgress(62,'Got '+raw.length+' recent items — curating with Claude…');
+  sfProgress(62,'Got '+raw.length+' recent items  curating with Claude');
 
   var today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   var kwNote=SF.keywords.length?'\nBoost importance for items matching: '+SF.keywords.join(', '):'';
@@ -717,7 +770,7 @@ async function sfFetch(){
             +'\nDESC: '+r.desc
             +'\nDATE: '+r.pubDate;
         }).join('\n---\n')
-      :'No RSS feeds loaded. Generate today\'s automotive intelligence from your knowledge — China EV, Tesla, charging tech, AI/autonomous, brand news from this week.');
+      :'No RSS feeds loaded. Generate today\'s automotive intelligence from your knowledge  China EV, Tesla, charging tech, AI/autonomous, brand news from this week.');
 
   try{
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
@@ -725,7 +778,7 @@ async function sfFetch(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,system:SYS,messages:[{role:'user',content:userPrompt}]})
     });
-    sfProgress(90,'Rendering signals…');
+    sfProgress(90,'Rendering signals');
     var data=await resp.json();
     if(data.error)throw new Error(data.error.message);
     var text=(data.content||[]).map(function(c){return c.type==='text'?c.text:'';}).join('\n');
@@ -738,10 +791,10 @@ async function sfFetch(){
       if(!m) throw new Error('No JSON object found in response');
       var candidate=m[0];
 
-      // First attempt — direct parse
+      // First attempt  direct parse
       try{ return JSON.parse(candidate); }catch(e1){}
 
-      // Second attempt — truncated JSON: find last complete item by trimming after last }
+      // Second attempt  truncated JSON: find last complete item by trimming after last }
       // before the closing array bracket
       try{
         // find the items array, truncate after last complete object
@@ -765,7 +818,7 @@ async function sfFetch(){
         }
       }catch(e2){}
 
-      // Third attempt — replace common bad chars and retry
+      // Third attempt  replace common bad chars and retry
       try{
         var fixed=candidate
           .replace(/,\s*}/g,'}')
@@ -795,15 +848,17 @@ async function sfFetch(){
   }catch(e){
     var err=document.getElementById('error-msg');
     err.style.display='block';
-    err.innerHTML='<strong>Error loading signals:</strong> '+e.message
-      +'<br><br>Make sure the <code>api/proxy.js</code> file is deployed alongside <code>index.html</code> on Vercel. '
-      +'Both files must be in the same GitHub repo.';
+    var proxyStatus = _proxyOk === true ? 'Vercel proxy OK' : _proxyOk === false ? 'Vercel proxy not reachable' : 'Proxy untested';
+    err.innerHTML='<strong>Error:</strong> '+e.message
+      +'<br><strong>Proxy status:</strong> '+proxyStatus
+      +'<br><br>The dashboard will retry with public fallback proxies on next refresh. '
+      +'If the Vercel proxy shows FAIL, check that <code>api/proxy.js</code> is in your GitHub repo root's <code>api/</code> folder and Vercel has redeployed.';
     document.getElementById('progress-bar-wrap').style.display='none';
   }
-  btn.disabled=false; icon.className=''; icon.textContent='↺'; lbl.textContent='Refresh';
+  btn.disabled=false; icon.className=''; icon.textContent=''; lbl.textContent='Refresh';
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// -- Init ----------------------------------------------------------------------
 sfLoad();
 sfBuildBrands();sfBuildSources();sfBuildKeywords();sfBuildAccounts();
 document.getElementById('importance-range').value=SF.minImportance;
